@@ -1,9 +1,46 @@
+from email import header
 from .utils import split_to_ints
 import logging
 import pysam
 import polars as pl
+import pandas as pd
 import numpy as np
 import sys
+
+
+def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
+    """Read a table made with fibertools-rs. Specifically `ft extract --all`.
+
+    Args:
+        f (str): File path to the table. Can be compressed.
+
+    Returns:
+        pl.DataFrame: Dataframe of the table.
+    """
+    cols_with_lists = [
+        "nuc_starts",
+        "nuc_lengths",
+        "ref_nuc_starts",
+        "ref_nuc_lengths",
+        "msp_starts",
+        "msp_lengths",
+        "ref_msp_starts",
+        "ref_msp_lengths",
+        "m6a",
+        "ref_m6a",
+        "cpg",
+        "ref_cpg",
+    ]
+    df = pl.read_csv(
+        f,
+        sep="\t",
+        n_rows=n_rows,
+    )
+    for col in cols_with_lists:
+        df[col] = split_to_ints(df, col, trim=False)
+    if pandas:
+        df = pd.DataFrame(df.to_dicts()).copy()
+    return df
 
 
 def read_in_bed12_file(bed_file, n_rows=None, tag=None, trim=True):
@@ -83,7 +120,7 @@ def make_AT_genome(genome_file, df):
     return AT_genome
 
 
-def read_in_bed_file(bed_file, n_rows=None, tag=None):
+def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False):
     """Read a bed file into a polars dataframe.
 
     Args:
@@ -94,34 +131,16 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None):
     Returns:
         pl.DataFrame: Dataframe of bed12 file.
     """
-    col_names = [
-        "ct",
-        "st",
-        "en",
-        "fiber",
-        "score",
-        "strand",
-        "tst",
-        "ten",
-        "color",
-        "bct",
-        "bsize",
-        "bst",
-    ]
     df = pl.read_csv(
         bed_file,
         sep="\t",
         comment_char="#",
-        has_header=False,
+        has_header=keep_header,
         n_rows=n_rows,
-        # encoding="utf8-lossy",
-        # ignore_errors = True,
         quote_char=None,
         low_memory=True,
         use_pyarrow=True,
     )
-    # df["bst"] = split_to_ints(df, "bst")
-    # df["bsize"] = split_to_ints(df, "bsize")
 
     logging.debug(df.columns)
     if tag is not None:
@@ -129,8 +148,9 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None):
             f"{col}_{tag}" if idx > 4 else col for idx, col in enumerate(df.columns)
         ]
     first_four = ["ct", "st", "en", "name"]
-    df.columns = [
-        first_four[idx] if idx < 4 else col for idx, col in enumerate(df.columns)
-    ]
+    if not keep_header:
+        df.columns = [
+            first_four[idx] if idx < 4 else col for idx, col in enumerate(df.columns)
+        ]
     logging.debug(df.columns)
     return df

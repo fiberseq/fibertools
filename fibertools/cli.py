@@ -4,6 +4,7 @@ import argparse
 from email.policy import default
 import sys
 import logging
+from typing_extensions import Required
 from fibertools.readutils import read_in_bed_file
 from fibertools.trackhub import generate_trackhub
 from fibertools.unionbg import bed2d4, make_q_values
@@ -108,11 +109,17 @@ def make_accessibility_model_parser(subparsers):
         help="Make MSP features",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+    parser.add_argument(
+        "--ft-all",
+        help="ft extract --all file. Can be compressed.",
+        action="store_true",
+    )
     parser.add_argument("msp_bed12", help="MSP bed12 file.")
-    parser.add_argument("m6a_bed12", help="m6a bed12 file.")
+    parser.add_argument("m6a_bed12", help="m6a bed12 file.", nargs="?")
     parser.add_argument(
         "genome",
         help="Indexed fasta file to read in sequence context. Should have the same chromosomes as referenced in the first column of the two bed files.",
+        nargs="?",
     )
     parser.add_argument("-d", "--dhs", help="dhs", default=None)
     parser.add_argument(
@@ -156,15 +163,15 @@ def make_accessibility_model_parser(subparsers):
 
 
 def split_bed_over_files(args):
-    bed = ft.read_in_bed_file(args.bed)
+    bed = ft.read_in_bed_file(args.bed, keep_header=True)
     logging.debug("Read in bed file.")
     index_splits = np.array_split(np.arange(bed.shape[0]), len(args.out_files))
     for index, out_file in zip(index_splits, args.out_files):
         if out_file.endswith(".gz"):
             with gzip.open(out_file, "wb") as f:
-                bed[index].to_csv(f, sep="\t", has_header=False)
+                bed[index].to_csv(f, sep="\t", has_header=True)
         else:
-            bed[index].to_csv(out_file, sep="\t", has_header=False)
+            bed[index].to_csv(out_file, sep="\t", has_header=True)
 
 
 def parse():
@@ -203,16 +210,21 @@ def parse():
     if args.command == "add_m6a":
         _m6a = ft.read_in_bed12_file(args.m6a)
     elif args.command == "model":
-        fiberdata = ft.Fiberdata(
-            args.msp_bed12,
-            args.m6a_bed12,
-            n_rows=args.n_rows,
-        )
-        AT_genome = ft.make_AT_genome(args.genome, fiberdata.both)
+        if args.ft_all is not None:
+            fiberdata = ft.Fiberdata_rs(args.msp_bed12, n_rows=args.n_rows)
+            fiberdata.make_msp_features(bin_num=args.bin_num, bin_width=args.bin_width)
+        else:
+            fiberdata = ft.Fiberdata(
+                args.msp_bed12,
+                args.m6a_bed12,
+                n_rows=args.n_rows,
+            )
+            AT_genome = ft.make_AT_genome(args.genome, fiberdata.both)
+            fiberdata.make_msp_features(
+                AT_genome, bin_num=args.bin_num, bin_width=args.bin_width
+            )
+
         dhs = read_in_bed_file(args.dhs, n_rows=args.n_rows)
-        fiberdata.make_msp_features(
-            AT_genome, bin_num=args.bin_num, bin_width=args.bin_width
-        )
         fiberdata.make_percolator_input(dhs, min_tp_msp_len=args.min_tp_msp_len)
 
         if args.model is None:
