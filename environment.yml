@@ -19,6 +19,7 @@ dependencies:
     - pyarrow 
     - rust==1.61.0 # skip, needed for pyd4
     - pip>=20.1 # pip is needed as dependency
+    - sorted_nearest
     - pip:
           - sphinx_rtd_theme
           - readthedocs-sphinx-search
