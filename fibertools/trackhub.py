@@ -126,7 +126,8 @@ def generate_trackhub(
         for idx, bw_f in enumerate(bw):
             base = os.path.basename(bw_f)
             nm = base.rstrip(".bw")
-            file = f"{trackhub_dir}/bw/{base}"
+            # file = f"{trackhub_dir}/bw/{base}"
+            file = f"bw/{base}"
             sys.stderr.write(f"{bw_f}\t{nm}\t{file}\n")
             if nm == "nuc":
                 nuc = file
