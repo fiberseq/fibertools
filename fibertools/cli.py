@@ -169,9 +169,9 @@ def split_bed_over_files(args):
     for index, out_file in zip(index_splits, args.out_files):
         if out_file.endswith(".gz"):
             with gzip.open(out_file, "wb") as f:
-                bed[index].to_csv(f, sep="\t", has_header=True)
+                bed[index].write_csv(f, sep="\t", has_header=True)
         else:
-            bed[index].to_csv(out_file, sep="\t", has_header=True)
+            bed[index].write_csv(out_file, sep="\t", has_header=True)
 
 
 def parse():
