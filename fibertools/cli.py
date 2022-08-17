@@ -276,8 +276,8 @@ def parse():
                 AT_genome, bin_num=args.bin_num, bin_width=args.bin_width
             )
 
-        dhs = read_in_bed_file(args.dhs, n_rows=args.n_rows)
-        fiberdata.make_percolator_input(dhs, min_tp_msp_len=args.min_tp_msp_len)
+        dhs = read_in_bed_file(args.dhs, n_rows=args.n_rows, pandas=True)
+        fiberdata.make_percolator_input(dhs_df=dhs, min_tp_msp_len=args.min_tp_msp_len)
 
         if args.model is None:
             fiberdata.train_accessibility_model(args.out)

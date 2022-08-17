@@ -35,11 +35,15 @@ def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
         f,
         sep="\t",
         n_rows=n_rows,
+        null_values=["."],
     )
+    # clean up comment char
+    df.columns = list(map(lambda x: x.strip("#"), df.columns))
+
     for col in cols_with_lists:
-        df[col] = split_to_ints(df, col, trim=False)
+        df.replace(col, split_to_ints(df, col, trim=False))
     if pandas:
-        df = pd.DataFrame(df.to_dicts()).copy()
+        df = pd.DataFrame(df.to_dicts())
     return df
 
 
@@ -75,9 +79,11 @@ def read_in_bed12_file(bed_file, n_rows=None, tag=None, trim=True):
         new_columns=col_names,
         has_header=False,
         n_rows=n_rows,
+        null_values=["."],
     )
-    df["bst"] = split_to_ints(df, "bst", trim=trim)
-    df["bsize"] = split_to_ints(df, "bsize", trim=trim)
+    df.replace("bst", split_to_ints(df, "bst", trim=trim))
+    df.replace("bsize", split_to_ints(df, "bsize", trim=trim))
+
     if tag is not None:
         df.columns = [
             f"{col}_{tag}" if idx > 4 else col for idx, col in enumerate(df.columns)
@@ -120,7 +126,7 @@ def make_AT_genome(genome_file, df):
     return AT_genome
 
 
-def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False):
+def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False, pandas=False):
     """Read a bed file into a polars dataframe.
 
     Args:
@@ -144,6 +150,7 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False):
         quote_char=None,
         low_memory=True,
         use_pyarrow=True,
+        null_values=["."],
     )
 
     logging.debug(df.columns)
@@ -156,5 +163,7 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False):
         df.columns = [
             first_four[idx] if idx < 4 else col for idx, col in enumerate(df.columns)
         ]
+    if pandas:
+        df = pd.DataFrame(df.to_dicts())
     logging.debug(df.columns)
     return df
