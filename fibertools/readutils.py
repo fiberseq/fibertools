@@ -131,10 +131,14 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False):
     Returns:
         pl.DataFrame: Dataframe of bed12 file.
     """
+    comment_char = "#"
+    if keep_header:
+        comment_char = None
+
     df = pl.read_csv(
         bed_file,
         sep="\t",
-        comment_char="#",
+        comment_char=comment_char,
         has_header=keep_header,
         n_rows=n_rows,
         quote_char=None,
