@@ -43,6 +43,12 @@ def make_bed_split_parser(subparsers):
     )
     parser.add_argument("bed", help="A bed file")
     parser.add_argument(
+        "-g",
+        "--genome",
+        help="Input is a genome file. Split the genome to bed files with the same number of bases.",
+        action="store_true",
+    )
+    parser.add_argument(
         "-o", "--out-files", help="files to split input across", nargs="+"
     )
 
@@ -162,16 +168,62 @@ def make_accessibility_model_parser(subparsers):
     )
 
 
+def write_bed_tuple_to_file(f, regions):
+    odf = pd.DataFrame(regions)
+    odf.to_csv(f, sep="\t", header=None, index=None)
+    return (odf[2] - odf[1]).sum()
+
+
 def split_bed_over_files(args):
-    bed = ft.read_in_bed_file(args.bed, keep_header=True)
-    logging.debug("Read in bed file.")
-    index_splits = np.array_split(np.arange(bed.shape[0]), len(args.out_files))
-    for index, out_file in zip(index_splits, args.out_files):
-        if out_file.endswith(".gz"):
-            with gzip.open(out_file, "wb") as f:
-                bed[index].write_csv(f, sep="\t", has_header=True)
-        else:
-            bed[index].write_csv(out_file, sep="\t", has_header=True)
+    if args.genome:
+        genome = pd.read_csv(args.bed, sep="\s+", header=None)
+        genome = genome.rename(columns={0: "ct", 1: "length"})
+        window_size = int(genome.length.sum() / len(args.out_files)) + 1
+
+        needed_bases = window_size
+        added_bases = 0
+        regions = []
+        out_idx = 0
+        for ct, length in zip(genome.ct, genome.length):
+            chrom_position = 0
+            while True:
+                logging.debug(
+                    f"Needed bases: {needed_bases}, chrom_position: {ct}:{chrom_position}"
+                )
+                # regions has all the bases we need for this chunk already
+                if needed_bases == 0:
+                    added_bases += write_bed_tuple_to_file(
+                        args.out_files[out_idx], regions
+                    )
+                    # reset needed_bases
+                    needed_bases = window_size
+                    regions = []
+                    out_idx += 1
+
+                # we need to add to regions
+                if chrom_position + needed_bases <= length:
+                    regions.append((ct, chrom_position, chrom_position + needed_bases))
+                    chrom_position += needed_bases
+                    needed_bases = 0
+                else:
+                    regions.append((ct, chrom_position, length))
+                    needed_bases -= length - chrom_position
+                    # reached the end of this chrom break
+                    break
+        # write last regions chunk
+        added_bases += write_bed_tuple_to_file(args.out_files[out_idx], regions)
+        # check all bp added
+        assert added_bases == genome.length.sum()
+    else:
+        bed = ft.read_in_bed_file(args.bed, keep_header=True)
+        logging.debug("Read in bed file.")
+        index_splits = np.array_split(np.arange(bed.shape[0]), len(args.out_files))
+        for index, out_file in zip(index_splits, args.out_files):
+            if out_file.endswith(".gz"):
+                with gzip.open(out_file, "wb") as f:
+                    bed[index].write_csv(f, sep="\t", has_header=True)
+            else:
+                bed[index].write_csv(out_file, sep="\t", has_header=True)
 
 
 def parse():
