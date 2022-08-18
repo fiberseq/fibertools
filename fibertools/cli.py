@@ -264,6 +264,16 @@ def parse():
     elif args.command == "model":
         if args.ft_all is not None:
             fiberdata = ft.Fiberdata_rs(args.msp_bed12, n_rows=args.n_rows)
+            # check if we have data
+            if fiberdata.all.shape[0] == 0:
+                if args.model is None:
+                    logging.warning("No MSPs found in training set.")
+                    sys.exit(1)
+                else:
+                    logging.warning("No MSPs found in MSP bed file.")
+                    with open(args.out, "w") as f:
+                        f.write("")
+                    sys.exit(0)
             fiberdata.make_msp_features(bin_num=args.bin_num, bin_width=args.bin_width)
         else:
             fiberdata = ft.Fiberdata(
