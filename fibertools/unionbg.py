@@ -76,7 +76,7 @@ def simple_make_union_d4_from_df(df, genome, group_col, d4_f):
 
 
 def bed2d4(args):
-    df = ft.read_in_bed_file(args.bed)
+    df = ft.read_in_bed_file(args.bed, pandas=True)
     if args.column == "score":
         # set high fdr values to the max
         # df = df.with_column(
