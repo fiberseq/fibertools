@@ -1,5 +1,6 @@
 from asyncio.log import logger
 import pandas as pd
+import polars as pl
 import numpy as np
 import logging
 import fibertools as ft
@@ -25,7 +26,10 @@ def split_to_ints(df, col, sep=",", trim=True):
     """
     if trim:
         return df[col].apply(lambda x: np.fromstring(x, sep=sep, dtype=np.int32)[1:-1])
-    return df[col].apply(lambda x: np.fromstring(x, sep=sep, dtype=np.int32))
+    return df[col].apply(
+        lambda x: np.fromstring(x, sep=sep, dtype=np.int32),
+        return_type=pl.datatypes.Object,
+    )
 
 
 def join_msp_and_m6a(args):
