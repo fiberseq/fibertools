@@ -1,3 +1,4 @@
+from email import header
 import os
 import sys
 from .utils import disjoint_bins
@@ -172,8 +173,8 @@ def generate_trackhub(
         (
             df.iloc[:, 0:9]
             .loc[df.bin == cur_bin]
-            .sort_values(["ct", "st", "en"])
-            .to_csv(out_file, sep="\t", index=False)
+            .sort_values(["#ct", "st", "en"])
+            .to_csv(out_file, sep="\t", index=False, header=False)
         )
         os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
         os.system(f"rm {out_file}")
