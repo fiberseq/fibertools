@@ -19,7 +19,7 @@ def chrom_bg(sts, ens, chrom_len):
 
 
 def df_to_bg(df, chrom, genome):
-    cov = chrom_bg(df.st.to_numpy(), df.en.to_numpy(), genome[chrom])
+    cov = chrom_bg(df["st"].to_numpy(), df["en"].to_numpy(), genome[chrom])
     return cov
 
 
