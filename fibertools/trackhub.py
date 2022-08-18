@@ -169,6 +169,11 @@ def generate_trackhub(
         sys.stderr.write(f"\r{cur_bin}")
         out_file = f"{trackhub_dir}/bed/bin.{cur_bin}.bed"
         bb_file = f"{trackhub_dir}/bins/bin.{cur_bin}.bed.bb"
-        (df.iloc[:, 0:9].loc[df.bin == cur_bin].to_csv(out_file, sep="\t", index=False))
+        (
+            df.iloc[:, 0:9]
+            .loc[df.bin == cur_bin]
+            .sort_values(["ct", "st", "en"])
+            .to_csv(out_file, sep="\t", index=False)
+        )
         os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
         os.system(f"rm {out_file}")
