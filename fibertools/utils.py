@@ -28,7 +28,7 @@ def split_to_ints(df, col, sep=",", trim=True):
         return df[col].apply(lambda x: np.fromstring(x, sep=sep, dtype=np.int32)[1:-1])
     return df[col].apply(
         lambda x: np.fromstring(x, sep=sep, dtype=np.int32),
-        return_type=pl.datatypes.Object,
+        return_dtype=pl.datatypes.Object,
     )
 
 
