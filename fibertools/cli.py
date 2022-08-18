@@ -280,8 +280,10 @@ def parse():
         fiberdata.make_percolator_input(dhs_df=dhs, min_tp_msp_len=args.min_tp_msp_len)
 
         if args.model is None:
+            logging.debug("Training model.")
             fiberdata.train_accessibility_model(args.out)
         else:
+            logging.debug("Loading model from file and predicting.")
             fiberdata.predict_accessibility(args.model)
             fiberdata.accessibility.to_csv(args.out, sep="\t", index=False)
     elif args.command == "split":
