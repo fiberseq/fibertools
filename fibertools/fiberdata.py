@@ -108,9 +108,10 @@ class Fiberdata:
             dhs_true = ft.utils.n_overlaps(self.features, dhs_df[dhs_df.name == "DHS"])
             out_df.loc[dhs_true > 0, "Label"] = 1
             out_df.loc[dhs_null > 0, "Label"] = -1
-
-        # if the msp is short make it null
-        out_df.loc[(dhs_true > 0) & (out_df.msp_len <= min_tp_msp_len), "Label"] = -1
+            # if the msp is short make it null
+            out_df.loc[
+                (dhs_true > 0) & (out_df.msp_len <= min_tp_msp_len), "Label"
+            ] = -1
 
         # add and drop columns needed for mokapot
         out_df.drop(to_remove, axis=1, inplace=True)
