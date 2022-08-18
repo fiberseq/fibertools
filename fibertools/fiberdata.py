@@ -330,7 +330,7 @@ class Fiberdata_rs:
                 (dhs_true > 0) & (out_df.msp_len <= min_tp_msp_len), "Label"
             ] = -1
         else:
-            # has not effect, percolator just needs some items to have positive labels
+            # has no effect, percolator just needs some items to have positive labels
             out_df.loc[out_df.msp_len >= min_tp_msp_len, "Label"] = 1
 
         # add and drop columns needed for mokapot
