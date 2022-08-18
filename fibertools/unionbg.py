@@ -33,7 +33,7 @@ def make_d4_from_df(df, genome, d4_f):
         .get_writer()
     )
     for g in df.groupby("ct"):
-        chrom = g.ct[0]
+        chrom = g["ct"][0]
         data = df_to_bg(g, chrom, genome)
         writer.write_np_array(chrom, 0, data)
     writer.close()
@@ -76,7 +76,7 @@ def simple_make_union_d4_from_df(df, genome, group_col, d4_f):
 
 
 def bed2d4(args):
-    df = ft.read_in_bed_file(args.bed, pandas=True)
+    df = ft.read_in_bed_file(args.bed)
     if args.column == "score":
         # set high fdr values to the max
         # df = df.with_column(
