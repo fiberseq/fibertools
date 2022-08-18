@@ -119,8 +119,8 @@ def null_space_in_bed12(
         pandas df: ~bed9 pandas df with null space between bed12 entries.
     """
     rows = pd.DataFrame(df.to_dicts()).copy()
+    # filter missing rows
     rows = rows[~(rows[bed12_st_col].isnull() | rows[bed12_size_col].isnull())]
-    logging.debug(f"Made a copy of the dataframe.\n{rows}")
     rows["spacer_st"] = rows.apply(
         lambda row: (row[bed12_st_col] + row[bed12_size_col])[:-1] + row["st"], axis=1
     )
