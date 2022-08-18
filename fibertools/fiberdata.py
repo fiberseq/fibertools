@@ -381,7 +381,9 @@ class Fiberdata_rs:
         out.loc[out.qValue < 0.1, "color"] = "255,0,0"
         out.loc[out.qValue < 0.05, "color"] = "139,0,0"
 
-        z = ft.utils.null_space_in_bed12(self.both)
+        z = ft.utils.null_space_in_bed12(
+            self.all, bed12_st_col="msp_starts", bed12_size_col="msp_lengths"
+        )
         z["qValue"] = 1
         z["strand"] = "+"
 
