@@ -120,13 +120,13 @@ def make_accessibility_model_parser(subparsers):
         help="ft extract --all file. Can be compressed.",
         action="store_true",
     )
-    parser.add_argument("msp_bed12", help="MSP bed12 file.")
-    parser.add_argument("m6a_bed12", help="m6a bed12 file.", nargs="?")
-    parser.add_argument(
-        "genome",
-        help="Indexed fasta file to read in sequence context. Should have the same chromosomes as referenced in the first column of the two bed files.",
-        nargs="?",
-    )
+    parser.add_argument("all", help="all output from ft-extract.")
+    # parser.add_argument("m6a_bed12", help="m6a bed12 file.", nargs="?")
+    # parser.add_argument(
+    #     "genome",
+    #     help="Indexed fasta file to read in sequence context. Should have the same chromosomes as referenced in the first column of the two bed files.",
+    #     nargs="?",
+    # )
     parser.add_argument("-d", "--dhs", help="dhs", default=None)
     parser.add_argument(
         "-b", "--bin_width", help="size of bin width to use", type=int, default=40
@@ -262,29 +262,29 @@ def parse():
     if args.command == "add_m6a":
         _m6a = ft.read_in_bed12_file(args.m6a)
     elif args.command == "model":
-        if args.ft_all is not None:
-            fiberdata = ft.Fiberdata_rs(args.msp_bed12, n_rows=args.n_rows)
-            # check if we have data
-            if fiberdata.all.shape[0] == 0:
-                if args.model is None:
-                    logging.warning("No MSPs found in training set.")
-                    sys.exit(1)
-                else:
-                    logging.warning("No MSPs found in MSP bed file.")
-                    with open(args.out, "w") as f:
-                        f.write("")
-                    sys.exit(0)
-            fiberdata.make_msp_features(bin_num=args.bin_num, bin_width=args.bin_width)
-        else:
-            fiberdata = ft.Fiberdata(
-                args.msp_bed12,
-                args.m6a_bed12,
-                n_rows=args.n_rows,
-            )
-            AT_genome = ft.make_AT_genome(args.genome, fiberdata.both)
-            fiberdata.make_msp_features(
-                AT_genome, bin_num=args.bin_num, bin_width=args.bin_width
-            )
+        # if args.ft_all is not None:
+        fiberdata = ft.Fiberdata_rs(args.all, n_rows=args.n_rows)
+        # check if we have data
+        if fiberdata.all.shape[0] == 0:
+            if args.model is None:
+                logging.warning("No MSPs found in training set.")
+                sys.exit(1)
+            else:
+                logging.warning("No MSPs found in MSP bed file.")
+                with open(args.out, "w") as f:
+                    f.write("")
+                sys.exit(0)
+        fiberdata.make_msp_features(bin_num=args.bin_num, bin_width=args.bin_width)
+        # else:
+        # fiberdata = ft.Fiberdata(
+        #     args.msp_bed12,
+        #     args.m6a_bed12,
+        #     n_rows=args.n_rows,
+        # )
+        # AT_genome = ft.make_AT_genome(args.genome, fiberdata.both)
+        # fiberdata.make_msp_features(
+        #     AT_genome, bin_num=args.bin_num, bin_width=args.bin_width
+        # )
         if args.dhs is not None:
             dhs = read_in_bed_file(args.dhs, n_rows=args.n_rows, pandas=True)
         else:
