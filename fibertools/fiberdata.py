@@ -184,6 +184,8 @@ class Fiberdata_rs:
         df = pd.DataFrame(
             self.all[["ct", "fiber", "ref_nuc_starts", "ref_nuc_lengths"]].to_dicts()
         )
+        logging.debug(f"Expanding into individual nucleosomes. {df.shape[0]}")
+        df = df.explode(["ref_nuc_starts", "ref_nuc_lengths"])
         df["st"] = df.ref_nuc_starts
         df["en"] = df.ref_nuc_starts + df.ref_nuc_lengths
         df["score"] = 1
@@ -192,6 +194,7 @@ class Fiberdata_rs:
         df["ten"] = df["en"]
         df["color"] = "230,230,230"
         df["qValue"] = 1
+        logging.debug(f"Finished expanding into individual nucleosomes. {df.shape[0]}")
         return df
 
     def predict_accessibility(self, model_file: str, max_fdr=0.30):
