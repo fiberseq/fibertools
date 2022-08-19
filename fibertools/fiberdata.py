@@ -181,7 +181,15 @@ class Fiberdata_rs:
             pickle.dump(models, f)
 
     def make_nucleosome_accessibility_df(self):
-        self.all
+        df = self.all[["ct", "fiber", "ref_nuc_starts", "ref_nuc_lengths"]].to_pandas()
+        df["st"] = df.ref_nuc_starts
+        df["en"] = df.ref_nuc_starts + df.ref_nuc_lengths
+        df["score"] = 1
+        df["strand"] = "+"
+        df["tst"] = df["st"]
+        df["ten"] = df["en"]
+        df["color"] = "230,230,230"
+        df["qValue"] = 1
 
     def predict_accessibility(self, model_file: str, max_fdr=0.30):
         moka_conf_psms, models = list(ft.utils.load_all(model_file))
@@ -215,12 +223,6 @@ class Fiberdata_rs:
         out.loc[out.qValue < 0.1, "color"] = "255,0,0"
         out.loc[out.qValue < 0.05, "color"] = "139,0,0"
 
-        # z = ft.utils.null_space_in_bed12(
-        #    self.all, bed12_st_col="msp_starts", bed12_size_col="msp_lengths"
-        # )
-        # z["qValue"] = 1
-        # z["strand"] = "+"
-
         out_cols = [
             "ct",
             "st",
@@ -235,7 +237,9 @@ class Fiberdata_rs:
             # "bin",
         ]
         final_out = (
-            pd.concat([out[out_cols]])  # , z[out_cols]])
+            pd.concat(
+                [out[out_cols], self.make_nucleosome_accessibility_df()[out_cols]]
+            )
             .sort_values(["ct", "st"])
             .rename(columns={"ct": "#ct"})
         )
