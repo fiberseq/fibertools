@@ -66,8 +66,8 @@ class Fiberdata_rs:
             rtn.append(
                 {
                     "ct": row["ct"],
-                    "st": row["st"] + ref_msp_st,
-                    "en": row["st"] + ref_msp_st + ref_msp_size,
+                    "st": ref_msp_st,
+                    "en": ref_msp_st + ref_msp_size,
                     "fiber": row["fiber"],
                     "score": row["score"],
                     "msp_len": msp_size,
