@@ -98,7 +98,7 @@ class Fiberdata_rs:
         logging.debug("Expanding bed12s into individual MSPs.")
 
         z = pd.DataFrame(msp_stuff)
-        mean_msp = np.mean(z["en"] - z["st"])
+        mean_msp = np.mean(z.en - z.st)
         logging.debug(f"Logging MSP features. mean ref size {mean_msp}.")
         # for some reason the MSPs sometimes have negative lengths
         # z = z[(z["st"] < z["en"])]
