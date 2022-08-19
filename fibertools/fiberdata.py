@@ -192,6 +192,7 @@ class Fiberdata_rs:
         df["ten"] = df["en"]
         df["color"] = "230,230,230"
         df["qValue"] = 1
+        return df
 
     def predict_accessibility(self, model_file: str, max_fdr=0.30):
         moka_conf_psms, models = list(ft.utils.load_all(model_file))
