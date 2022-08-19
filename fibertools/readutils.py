@@ -154,7 +154,6 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False, pandas=
         null_values=["."],
     )
 
-    logging.debug(df.columns)
     if tag is not None:
         df.columns = [
             f"{col}_{tag}" if idx > 4 else col for idx, col in enumerate(df.columns)
@@ -166,5 +165,4 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False, pandas=
         ]
     if pandas:
         df = pd.DataFrame(df.to_dicts())
-    logging.debug(df.columns)
     return df
