@@ -175,6 +175,9 @@ class Fiberdata_rs:
             pickle.dump(moka_conf.psms, f)
             pickle.dump(models, f)
 
+    def make_nucleosome_accessibility_df(self):
+        self.all
+
     def predict_accessibility(self, model_file: str, max_fdr=0.30):
         moka_conf_psms, models = list(ft.utils.load_all(model_file))
 
@@ -207,11 +210,11 @@ class Fiberdata_rs:
         out.loc[out.qValue < 0.1, "color"] = "255,0,0"
         out.loc[out.qValue < 0.05, "color"] = "139,0,0"
 
-        z = ft.utils.null_space_in_bed12(
-            self.all, bed12_st_col="msp_starts", bed12_size_col="msp_lengths"
-        )
-        z["qValue"] = 1
-        z["strand"] = "+"
+        # z = ft.utils.null_space_in_bed12(
+        #    self.all, bed12_st_col="msp_starts", bed12_size_col="msp_lengths"
+        # )
+        # z["qValue"] = 1
+        # z["strand"] = "+"
 
         out_cols = [
             "ct",

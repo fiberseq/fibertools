@@ -28,8 +28,8 @@ def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
         "ref_msp_lengths",
         "m6a",
         "ref_m6a",
-        "cpg",
-        "ref_cpg",
+        "5mC",
+        "ref_5mC",
     ]
     df = pl.read_csv(
         f,
