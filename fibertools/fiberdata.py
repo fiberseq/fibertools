@@ -235,7 +235,7 @@ class Fiberdata_rs:
             # "bin",
         ]
         final_out = (
-            pd.concat([out[out_cols], z[out_cols]])
+            pd.concat([out[out_cols]])  # , z[out_cols]])
             .sort_values(["ct", "st"])
             .rename(columns={"ct": "#ct"})
         )
