@@ -1,6 +1,7 @@
 """Console script for fibertools."""
 #!/usr/bin/env python3
 import argparse
+from cgi import test
 from email.policy import default
 import sys
 import logging
@@ -293,7 +294,9 @@ def parse():
 
         if args.model is None:
             logging.debug("Training model.")
-            fiberdata.train_accessibility_model(args.out)
+            fiberdata.train_accessibility_model(
+                args.out, train_fdr=args.train_fdr, test_fdr=args.test_fdr
+            )
         else:
             logging.debug("Loading model from file and predicting.")
             fiberdata.predict_accessibility(args.model)
