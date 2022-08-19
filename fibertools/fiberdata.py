@@ -251,4 +251,6 @@ class Fiberdata_rs:
         )
         final_out["score"] = (final_out.qValue * 100).astype(int)
         # final_out.to_csv(args.out, sep="\t", index=False)
-        self.accessibility = final_out
+        self.accessibility = final_out[
+            (final_out.st >= 0) & (final_out.st < final_out.en)
+        ]
