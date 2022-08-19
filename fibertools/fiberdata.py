@@ -231,8 +231,12 @@ class Fiberdata_rs:
         fiber_AT_count = is_at.sum()
         fiber_m6a_count = row["m6a"].shape[0]
 
-        for msp_st, msp_size, bin_starts in zip(
-            row["msp_starts"], row["msp_lengths"], all_bin_starts
+        for msp_st, msp_size, bin_starts, ref_msp_st, ref_msp_size in zip(
+            row["msp_starts"],
+            row["msp_lengths"],
+            all_bin_starts,
+            row["ref_msp_starts"],
+            row["ref_msp_lengths"],
         ):
             msp_en = msp_st + msp_size
             if msp_en <= msp_st:
@@ -246,8 +250,8 @@ class Fiberdata_rs:
             rtn.append(
                 {
                     "ct": row["ct"],
-                    "st": row["st"] + msp_st,
-                    "en": row["st"] + msp_st + msp_size,
+                    "st": row["st"] + ref_msp_st,
+                    "en": row["st"] + ref_msp_st + ref_msp_size,
                     "fiber": row["fiber"],
                     "score": row["score"],
                     "fiber_m6a_count": fiber_m6a_count,
