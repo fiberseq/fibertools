@@ -70,6 +70,7 @@ class Fiberdata_rs:
                     "en": row["st"] + ref_msp_st + ref_msp_size,
                     "fiber": row["fiber"],
                     "score": row["score"],
+                    "msp_len": msp_size,
                     "fiber_m6a_count": fiber_m6a_count,
                     "fiber_AT_count": fiber_AT_count,
                     "fiber_m6a_frac": fiber_m6a_count / fiber_AT_count,
@@ -105,7 +106,6 @@ class Fiberdata_rs:
         # Make more MSP featrues columns
         z["bin_m6a_frac"] = z.m6a_count / z.AT_count
         z["m6a_frac"] = z.msp_m6a / z.msp_AT
-        z["msp_len"] = z.en - z.st
         m6a_fracs = pd.DataFrame(
             z["bin_m6a_frac"].tolist(),
             columns=[f"m6a_frac_{i}" for i in range(bin_num)],
