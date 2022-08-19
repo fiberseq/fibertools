@@ -181,7 +181,9 @@ class Fiberdata_rs:
             pickle.dump(models, f)
 
     def make_nucleosome_accessibility_df(self):
-        df = self.all[["ct", "fiber", "ref_nuc_starts", "ref_nuc_lengths"]].to_pandas()
+        df = pd.DataFrame(
+            self.all[["ct", "fiber", "ref_nuc_starts", "ref_nuc_lengths"]].to_dicts()
+        )
         df["st"] = df.ref_nuc_starts
         df["en"] = df.ref_nuc_starts + df.ref_nuc_lengths
         df["score"] = 1
