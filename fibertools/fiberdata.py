@@ -99,7 +99,7 @@ class Fiberdata_rs:
 
         z = pd.DataFrame(msp_stuff)
         mean_msp = np.mean(z.en - z.st)
-        logging.debug(f"Logging MSP features. mean ref size {mean_msp}.")
+        logging.debug(f"mean msp size {mean_msp}")
         # for some reason the MSPs sometimes have negative lengths
         # z = z[(z["st"] < z["en"])]
         # Make more MSP featrues columns
@@ -170,6 +170,9 @@ class Fiberdata_rs:
         self.pin = out_df
 
     def train_accessibility_model(self, out_file: str, train_fdr=0.1, test_fdr=0.05):
+        logging.debug(
+            f"Using {train_fdr} fdr for training and {test_fdr} fdr for testing."
+        )
         moka_conf, models = ft.classify.make_accessibility_model(
             self.pin, train_fdr=train_fdr, test_fdr=test_fdr
         )
