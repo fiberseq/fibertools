@@ -35,6 +35,7 @@ def make_d4_from_df(df, genome, d4_f):
     for g in df.groupby("ct"):
         chrom = g["ct"][0]
         data = df_to_bg(g, chrom, genome)
+        logging.debug(f"Writing {chrom} to d4. Has a total of {data.sum()} values.")
         writer.write_np_array(chrom, 0, data)
     writer.close()
 
@@ -48,9 +49,9 @@ def make_temp_d4_from_df(df, genome):
 def make_union_d4_from_df(df, genome, group_col, d4_f):
     out_files = []
     for idx, g in enumerate(df.groupby([group_col])):
+        logging.debug(f"Making d4 for group: {g_n}")
         g_n = g[group_col][0]
         out_files.append((g_n, make_temp_d4_from_df(g, genome)))
-        logging.debug(f"Made d4 for group: {g_n}")
 
     merged = pyd4.D4Merger(d4_f)
     for tag, d4 in sorted(out_files):
