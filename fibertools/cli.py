@@ -315,6 +315,7 @@ def parse():
         )
     elif args.command == "bed2d4":
         if args.fdr:
+            logging.debug("Making fdr peaks.")
             make_q_values(args.bed, args.d4)
         else:
             bed2d4(args)
