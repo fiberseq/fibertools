@@ -62,20 +62,6 @@ def make_union_d4_from_df(df, genome, group_col, d4_f):
     [d4.close() for _tag, d4 in out_files]
 
 
-# does not work, to be removed.
-def simple_make_union_d4_from_df(df, genome, group_col, d4_f):
-    merged = pyd4.D4Merger(d4_f)
-    for g in df.groupby([group_col]):
-        tag = g[group_col][0]
-        temp = tempfile.NamedTemporaryFile(suffix=".d4")
-        make_d4_from_df(g, genome, temp.name)
-        merged.add_tagged_track("q_" + str(tag), temp.name)
-        temp.close()
-        logging.debug(f"Made d4 for group: {tag}")
-    logging.debug(f"Merging groups.")
-    merged.merge()
-
-
 def bed2d4(args):
     df = ft.read_in_bed_file(args.bed)
     if args.column == "score":
@@ -117,6 +103,8 @@ def make_q_values(in_d4, out_d4):
     q_values = np.array([max(int(x.strip("q_")) / 100, 0.001) for x in track_names])
     log_q_values = -10 * np.log10(q_values[:-2])
 
+    logging.debug(f"chroms: {chroms}")
+
     # output file
     m = pyd4.D4Merger(out_d4)
     # To enumerate the matrix
@@ -137,9 +125,7 @@ def make_q_values(in_d4, out_d4):
         bin_size = 5_000_000
         cur_st = 0
         cur_en = bin_size
-        while cur_en < ct_len and cur_st < ct_len:
-            if ct != "chr11" or cur_en > bin_size:
-                break
+        while True:  # cur_en < ct_len and cur_st < ct_len:
             if cur_en > ct_len:
                 cur_en = ct_len
 
@@ -152,6 +138,8 @@ def make_q_values(in_d4, out_d4):
 
             if logging.DEBUG >= logging.root.level:
                 sys.stderr.write(f"\r[DEBUG]: {ct} {cur_en/ct_len:.2%}")
+            if cur_en == ct_len:
+                break
             cur_st += bin_size
             cur_en += bin_size
 
