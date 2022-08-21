@@ -84,7 +84,7 @@ def bed2d4(args):
 
 
 @njit(parallel=True)
-def make_summary_stats(matrix, log_q_values):
+def make_summary_stats(matrix, log_q_values=None):
     y = matrix.T
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
     acc_cov = y[:, :-2].sum(axis=1)
@@ -102,6 +102,7 @@ def make_q_values(in_d4, out_d4):
     # these are the q values
     q_values = np.array([max(int(x.strip("q_")) / 100, 0.001) for x in track_names])
     log_q_values = -10 * np.log10(q_values[:-2])
+    one_minus_q_values = 1 - q_values
 
     logging.debug(f"chroms: {chroms}")
 
@@ -131,7 +132,7 @@ def make_q_values(in_d4, out_d4):
 
             cur_mat = matrix[ct, cur_st, cur_en]
             idx = 0
-            for data in make_summary_stats(cur_mat, log_q_values):
+            for data in make_summary_stats(cur_mat, one_minus_q_values):
                 w = out_temp_files[idx][1]
                 w.write_np_array(ct, cur_st, data)
                 idx += 1
