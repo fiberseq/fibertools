@@ -84,12 +84,16 @@ def bed2d4(args):
 
 
 @njit(parallel=True)
-def make_summary_stats(matrix, log_q_values=None):
+def make_summary_stats(matrix, log_q_values=None, adjust_for_coverage=True):
     y = matrix.T
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
     acc_cov = y[:, :-2].sum(axis=1)
     link_cov = y[:, -2]
     nuc_cov = y[:, -1]
+    cov = acc_cov + link_cov + nuc_cov
+    # adjust for expected amount of coverage
+    if adjust_for_coverage:
+        log_q_vals = log_q_vals - cov / 10 * (-10 * np.log10(0.01))
     # assert nuc_cov.sum() == link_cov.sum()
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
 
@@ -100,7 +104,7 @@ def make_q_values(in_d4, out_d4):
     matrix = file.open_all_tracks()
     track_names = matrix.track_names
     # these are the q values
-    q_values = np.array([max(int(x.strip("q_")) / 100, 0.001) for x in track_names])
+    q_values = np.array([max(int(x.strip("q_")) / 100, 0.01) for x in track_names])
     log_q_values = -10 * np.log10(q_values[:-2])
     one_minus_q_values = 1 - q_values[:-2]
 
@@ -132,7 +136,7 @@ def make_q_values(in_d4, out_d4):
 
             cur_mat = matrix[ct, cur_st, cur_en]
             idx = 0
-            for data in make_summary_stats(cur_mat, log_q_values=one_minus_q_values):
+            for data in make_summary_stats(cur_mat, log_q_values=log_q_values):
                 logging.debug(
                     f"Writing {ct} {cur_st} {cur_en} with index {idx} to d4. Mean is {data.mean()}"
                 )
