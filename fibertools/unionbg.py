@@ -132,7 +132,7 @@ def make_q_values(in_d4, out_d4):
 
             cur_mat = matrix[ct, cur_st, cur_en]
             idx = 0
-            for data in make_summary_stats(cur_mat, one_minus_q_values):
+            for data in make_summary_stats(cur_mat, log_q_values=one_minus_q_values):
                 logging.debug(
                     f"Writing {ct} {cur_st} {cur_en} with index {idx} to d4. Mean is {data.mean()}"
                 )
