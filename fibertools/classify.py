@@ -152,7 +152,7 @@ def assign_classifier_fdr(pin_data, models, mokapot_conf):
 
 
 def make_accessibility_model(
-    pin, train_fdr=0.10, test_fdr=0.05, subset_max_train=500_000
+    pin, train_fdr=0.10, test_fdr=0.05, subset_max_train=2_000_000
 ):
     logging.debug(f"dataset size: {pin.shape}")
     logging.debug(f"dataset label counts: {pin.Label.value_counts()}")
