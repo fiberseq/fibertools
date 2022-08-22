@@ -299,7 +299,10 @@ def parse():
             )
         else:
             logging.debug("Loading model from file and predicting.")
-            fiberdata.predict_accessibility(args.model)
+            logging.debug(
+                f"Max FDR allowed for an accessibility call: {args.train_fdr}"
+            )
+            fiberdata.predict_accessibility(args.model, max_fdr=args.train_fdr)
             fiberdata.accessibility.to_csv(args.out, sep="\t", index=False)
     elif args.command == "split":
         split_bed_over_files(args)

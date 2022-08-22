@@ -224,10 +224,10 @@ class Fiberdata_rs:
         # set the values above the max_fdr to 1
         out.loc[out.qValue >= max_fdr, "qValue"] = 1
 
-        out.loc[out.qValue < 0.3, "color"] = "255,255,0"
-        out.loc[out.qValue < 0.2, "color"] = "255,140,0"
-        out.loc[out.qValue < 0.1, "color"] = "255,0,0"
-        out.loc[out.qValue < 0.05, "color"] = "139,0,0"
+        # out.loc[out.qValue <= 0.10, "color"] = "255,255,0"
+        out.loc[out.qValue <= 0.10, "color"] = "255,140,0"
+        out.loc[out.qValue <= 0.05, "color"] = "255,0,0"
+        out.loc[out.qValue <= 0.01, "color"] = "139,0,0"
 
         out_cols = [
             "ct",

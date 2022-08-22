@@ -93,7 +93,7 @@ def make_summary_stats(matrix, log_q_values=None, adjust_for_coverage=True):
     cov = acc_cov + link_cov + nuc_cov
     # adjust for expected amount of coverage
     if adjust_for_coverage:
-        log_q_vals = log_q_vals - cov / 10 * (-10 * np.log10(0.01))
+        log_q_vals = log_q_vals - cov / 10 * (-10 * np.log10(0.1))
     # assert nuc_cov.sum() == link_cov.sum()
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
 
