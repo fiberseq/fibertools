@@ -49,8 +49,8 @@ def make_temp_d4_from_df(df, genome):
 def make_union_d4_from_df(df, genome, group_col, d4_f):
     out_files = []
     for idx, g in enumerate(df.groupby([group_col])):
-        logging.debug(f"Making d4 for group: {g_n}")
         g_n = g[group_col][0]
+        logging.debug(f"Making d4 for group: {g_n}")
         out_files.append((g_n, make_temp_d4_from_df(g, genome)))
 
     merged = pyd4.D4Merger(d4_f)
