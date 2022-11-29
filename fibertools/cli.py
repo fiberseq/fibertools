@@ -9,6 +9,7 @@ from typing_extensions import Required
 from fibertools.readutils import read_in_bed_file
 from fibertools.trackhub import generate_trackhub
 from fibertools.unionbg import bed2d4, make_q_values
+from fibertools.add_nucleosomes import add_nucleosomes
 import fibertools as ft
 import numpy as np
 import gzip
@@ -26,13 +27,54 @@ def make_bam2bed_parser(subparsers):
 def make_add_m6a_parser(subparsers):
     parser = subparsers.add_parser(
         "add-m6a",
-        help="Make MSP features",
+        help="Add m6A tag",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("bam", help="ccs bam file.")
     parser.add_argument("m6a", help="m6a bed12 file.")
     parser.add_argument(
         "-o", "--out", help="file to write output bam to.", default=sys.stdout
+    )
+
+
+def make_add_nucleosome_parser(subparsers):
+    parser = subparsers.add_parser(
+        "add-nucleosomes",
+        help="Add Nucleosome and MSP tags",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument("bam", help="aligned bam file from actc")
+    parser.add_argument(
+        "-m",
+        "--model",
+        help="pretrained hmm model (json).",
+        default=None,
+    )
+    parser.add_argument(
+        "-n",
+        "--num-train",
+        help="Number of fibers used to train HMM.",
+        type=int,
+        default=5000,
+    )
+    parser.add_argument(
+        "-d",
+        "--min-dist",
+        help="Minimum distance from the start or end of a fiber for a accessible or nucelosome call.",
+        type=int,
+        default=46,
+    )
+    parser.add_argument(
+        "-c", "--cutoff", type=int, default=65, help="hmm nucleosome size cutoff"
+    )
+    parser.add_argument(
+        "out",
+        help="Output bam or json file.",
+        type=argparse.FileType("w"),
+    )
+    parser.add_argument("-t", "--threads", help="n threads to use", type=int, default=1)
+    parser.add_argument(
+        "-v", "--verbose", help="increase logging verbosity", action="store_true"
     )
 
 
@@ -239,6 +281,7 @@ def parse():
     )
     make_bam2bed_parser(subparsers)
     make_add_m6a_parser(subparsers)
+    make_add_nucleosome_parser(subparsers)
     make_accessibility_model_parser(subparsers)
     make_bed_split_parser(subparsers)
     make_trackhub_parser(subparsers)
@@ -259,9 +302,12 @@ def parse():
     log_format = "[%(levelname)s][Time elapsed (ms) %(relativeCreated)d]: %(message)s"
     log_level = logging.DEBUG if args.verbose else logging.WARNING
     logging.basicConfig(format=log_format, level=log_level)
-
+    print(args.command)
     if args.command == "add_m6a":
         _m6a = ft.read_in_bed12_file(args.m6a)
+    elif args.command == "add-nucleosomes":
+        logging.debug("Adding nucleosomes")
+        add_nucleosomes(args)
     elif args.command == "model":
         # if args.ft_all is not None:
         fiberdata = ft.Fiberdata_rs(args.all, n_rows=args.n_rows)
