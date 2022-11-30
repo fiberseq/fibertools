@@ -5,6 +5,7 @@ import logging
 import pomegranate as pom
 import array
 import sys
+import tqdm
 
 D_TYPE = np.int64
 
@@ -191,7 +192,7 @@ def meshMethods(
 
 
 def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46):
-    for rec in bam.fetch(until_eof=True):
+    for rec in tqdm.tqdm(bam.fetch(until_eof=True)):
         (
             binary,
             AT_positions,

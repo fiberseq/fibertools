@@ -17,6 +17,7 @@ dependencies:
     - xgboost==1.5.1
     - Cython
     - pyarrow 
+    - tqdm
     - rust==1.61.0 # skip, needed for pyd4
     - pip>=20.1 # pip is needed as dependency
     - sorted_nearest
