@@ -64,7 +64,9 @@ def assign_states(model):
     return actuated, nucleated
 
 
-def get_mods_from_rec(rec, mods=[("A", 0, "a"), ("T", 1, "a")], mask=True):
+def get_mods_from_rec(
+    rec, mods=[("A", 0, "a"), ("T", 1, "a")], mask=True, ml_cutoff=200
+):
     if rec.modified_bases is None:
         return None, None, None
     seq = np.frombuffer(bytes(rec.query_sequence, "utf-8"), dtype="S1")
@@ -72,7 +74,7 @@ def get_mods_from_rec(rec, mods=[("A", 0, "a"), ("T", 1, "a")], mask=True):
     for mod in mods:
         if mod in rec.modified_bases:
             all_pos = np.array(rec.modified_bases[mod], dtype=D_TYPE)
-            pos = all_pos[all_pos[:, 1] > 200, 0]
+            pos = all_pos[all_pos[:, 1] > ml_cutoff, 0]
             positions.append(pos)
     if len(positions) < 1:
         return None, None, None
@@ -215,7 +217,7 @@ def meshMethods(
     # next check that it is flanked by 0s
 
 
-def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46):
+def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46, ml_cutoff=200):
     for rec in tqdm.tqdm(bam.fetch(until_eof=True)):
         # clear previous calling methods:
         for tag in ["ns", "nl", "as", "al"]:
@@ -225,7 +227,7 @@ def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46):
             binary,
             AT_positions,
             methylated_positions,
-        ) = get_mods_from_rec(rec, mask=True)
+        ) = get_mods_from_rec(rec, mask=True, ml_cutoff=ml_cutoff)
         if binary is None:
             out.write(rec)
             continue
@@ -507,7 +509,9 @@ def add_nucleosomes(args):
         logging.info("Training HMM for nucleosome calling")
         training_set = []
         for rec in bam.fetch(until_eof=True):
-            mods, _AT_pos, m6a_pos = get_mods_from_rec(rec, mask=True)
+            mods, _AT_pos, m6a_pos = get_mods_from_rec(
+                rec, mask=True, ml_cutoff=args.ml_cutoff
+            )
             if mods is None or m6a_pos.shape[0] < args.min_m6a_calls:
                 continue
             training_set.append(mods)
@@ -524,6 +528,14 @@ def add_nucleosomes(args):
         out = pysam.AlignmentFile(args.out, "wb", template=bam, threads=args.threads)
         hmm = pom.HiddenMarkovModel().from_json(args.model)
         _actuated_label, nucleated_label = assign_states(hmm)
-        apply_hmm(bam, hmm, nucleated_label, args.cutoff, out, min_dist=args.min_dist)
+        apply_hmm(
+            bam,
+            hmm,
+            nucleated_label,
+            args.cutoff,
+            out,
+            min_dist=args.min_dist,
+            ml_cutoff=args.ml_cutoff,
+        )
 
     return 0
