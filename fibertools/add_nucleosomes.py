@@ -272,6 +272,7 @@ def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46):
 
         # no nucleosomes found, continue
         if methylated_positions.shape[0] == 0 or output_sizes.shape[0] == 0:
+            logging.info("No nucleosomes found for {}".format(rec.query_name))
             out.write(rec)
             continue
 
