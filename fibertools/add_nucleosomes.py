@@ -7,7 +7,30 @@ import array
 import sys
 import tqdm
 
+# from numba import njit, jit
+
 D_TYPE = np.int64
+
+
+# @jit
+def rle_helper(ia):
+    n = ia.shape[0]
+    y = ia[1:] != ia[:-1]  # pairwise unequal (string safe)
+    i = np.append(np.where(y), n - 1)  # must include last element posi
+    z = np.diff(np.append(-1, i))  # run lengths
+    p = np.cumsum(np.append(0, z))[:-1]  # positions
+    return (z, p, ia[i])
+
+
+def rle(inarray):
+    """run length encoding. Partial credit to R rle function.
+    Multi datatype arrays catered for including non Numpy
+    returns: tuple (runlengths, startpositions, values)
+    https://stackoverflow.com/questions/1066758/
+    find-length-of-sequences-of-identical-values-in-a-numpy-array-run-length-encodi
+    """
+    ia = np.asarray(inarray, dtype=D_TYPE)  # force numpyS
+    return rle_helper(ia)
 
 
 def train_hmm(data, n_jobs=1):
@@ -467,24 +490,7 @@ def simpleFind(methylated_positions, binary, cutoff):
         )
 
     else:
-
         return simple_nuc_starts, simple_nuc_sizes, False
-
-
-def rle(inarray):
-    """run length encoding. Partial credit to R rle function.
-    Multi datatype arrays catered for including non Numpy
-    returns: tuple (runlengths, startpositions, values)
-    https://stackoverflow.com/questions/1066758/
-    find-length-of-sequences-of-identical-values-in-a-numpy-array-run-length-encodi
-    """
-    ia = np.asarray(inarray, dtype=D_TYPE)  # force numpy
-    n = len(ia)
-    y = ia[1:] != ia[:-1]  # pairwise unequal (string safe)
-    i = np.append(np.where(y), n - 1)  # must include last element posi
-    z = np.diff(np.append(-1, i))  # run lengths
-    p = np.cumsum(np.append(0, z))[:-1]  # positions
-    return (z, p, ia[i])
 
 
 def add_nucleosomes(args):
