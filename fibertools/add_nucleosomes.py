@@ -4,6 +4,7 @@ import numpy as np
 import logging
 import pomegranate as pom
 import array
+import sys
 
 D_TYPE = np.int64
 
@@ -16,7 +17,7 @@ def train_hmm(data, n_jobs=1):
         pom.DiscreteDistribution,
         n_components=2,
         X=data,
-        verbose=True,
+        verbose=False,
         max_iterations=250,
         n_init=10,
         n_jobs=n_jobs,
@@ -486,9 +487,9 @@ def rle(inarray):
 
 
 def add_nucleosomes(args):
-    logging.info("Reading in bam file")
-    bam = pysam.AlignmentFile(args.bam, threads=args.threads, check_sq=False)
+    bam = pysam.AlignmentFile(args.input, threads=args.threads, check_sq=False)
     if args.model is None:
+        logging.info("Training HMM for nucleosome calling")
         training_set = []
         for idx, rec in enumerate(bam.fetch(until_eof=True)):
             mods, _AT_pos, _m6a_pos = get_mods_from_rec(rec, mask=True)
@@ -499,9 +500,12 @@ def add_nucleosomes(args):
                 break
         model = train_hmm(training_set, n_jobs=args.threads)
         json_model = model.to_json()
-        with args.out as handle:
+
+        out = sys.stdout if args.out == "-" else open(args.out, "w")
+        with out as handle:
             handle.write(json_model)
     else:
+        logging.info("Applying HMM for nucleosome calling")
         out = pysam.AlignmentFile(args.out, "wb", template=bam)
         hmm = pom.HiddenMarkovModel().from_json(args.model)
         _actuated_label, nucleated_label = assign_states(hmm)

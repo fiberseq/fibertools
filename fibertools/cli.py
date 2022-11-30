@@ -43,7 +43,19 @@ def make_add_nucleosome_parser(subparsers):
         help="Add Nucleosome and MSP tags",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("bam", help="aligned bam file from actc")
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="Bam file after m6A calling has been done",
+        type=argparse.FileType("r"),
+        default=sys.stdin,
+    )
+    parser.add_argument(
+        "-o",
+        "--out",
+        help="Output bam or json file.",
+        default="-",
+    )
     parser.add_argument(
         "-m",
         "--model",
@@ -66,15 +78,6 @@ def make_add_nucleosome_parser(subparsers):
     )
     parser.add_argument(
         "-c", "--cutoff", type=int, default=65, help="hmm nucleosome size cutoff"
-    )
-    parser.add_argument(
-        "out",
-        help="Output bam or json file.",
-        type=argparse.FileType("w"),
-    )
-    parser.add_argument("-t", "--threads", help="n threads to use", type=int, default=1)
-    parser.add_argument(
-        "-v", "--verbose", help="increase logging verbosity", action="store_true"
     )
 
 
@@ -302,7 +305,7 @@ def parse():
     log_format = "[%(levelname)s][Time elapsed (ms) %(relativeCreated)d]: %(message)s"
     log_level = logging.DEBUG if args.verbose else logging.WARNING
     logging.basicConfig(format=log_format, level=log_level)
-    print(args.command)
+
     if args.command == "add_m6a":
         _m6a = ft.read_in_bed12_file(args.m6a)
     elif args.command == "add-nucleosomes":
