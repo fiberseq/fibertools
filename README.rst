@@ -26,15 +26,16 @@ A python package for handling Fiber-seq data.
 * Free software: MIT license
 * Documentation: https://fibertools.readthedocs.io.
 
-Install:: 
+Install
 -------
+
+::
     pip install fibertools
 
 Features
 --------
 
 ::
-
     usage: fibertools [-h] [-t THREADS] [-v] [-V] {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4} ...
     positional arguments:
     {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4}
