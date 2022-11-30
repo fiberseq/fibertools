@@ -71,7 +71,8 @@ def get_mods_from_rec(rec, mods=[("A", 0, "a"), ("T", 1, "a")], mask=True):
     positions = []
     for mod in mods:
         if mod in rec.modified_bases:
-            pos = np.array(rec.modified_bases[mod], dtype=D_TYPE)[:, 0]
+            all_pos = np.array(rec.modified_bases[mod], dtype=D_TYPE)
+            pos = all_pos[all_pos[:, 1] > 200, 0]
             positions.append(pos)
     if len(positions) < 1:
         return None, None, None
