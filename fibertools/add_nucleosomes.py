@@ -357,12 +357,12 @@ def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46):
         ), f"Number of nucleosomes must be within 1 of the number of MSP elements: MSP({n_msp}), Nuc({n_nuc})"
 
         if output_sizes.shape[0] > 0:
-            rec.set_tag("ns", array.array("I", output_starts_2))
-            rec.set_tag("nl", array.array("I", output_sizes_2))
+            rec.set_tag("ns", array.array("I", output_starts_2), repr=True)
+            rec.set_tag("nl", array.array("I", output_sizes_2), replace=True)
             logging.info(f"ns nl set for fiber: {rec.query_name}")
         if acc_sizes.shape[0] > 0:
-            rec.set_tag("as", array.array("I", acc_starts_2))
-            rec.set_tag("al", array.array("I", acc_sizes_2))
+            rec.set_tag("as", array.array("I", acc_starts_2), replace=True)
+            rec.set_tag("al", array.array("I", acc_sizes_2), replace=True)
             logging.info(f"as al set for fiber: {rec.query_name}")
         out.write(rec)
 
