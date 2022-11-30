@@ -217,6 +217,30 @@ def meshMethods(
     # next check that it is flanked by 0s
 
 
+def predict_with_hmm(hmm, binary, nuc_label, AT_positions, cutoff):
+    state_path = hmm.predict(binary)
+    # starts indicate start in AT binary array
+    # lengths indicates length in AT binary space
+    # labels is the state label
+    lengths, starts, labels = rle(state_path)
+
+    # move to genomic space instead of AT
+    hmm_nucleosome_mask = labels == nuc_label
+    hmm_nuc_ends = AT_positions[
+        np.add(starts[hmm_nucleosome_mask], lengths[hmm_nucleosome_mask] - 1)
+    ]
+    hmm_nuc_starts = AT_positions[starts[hmm_nucleosome_mask]]
+    hmm_nuc_sizes = hmm_nuc_ends - hmm_nuc_starts
+    hmm_sizing_mask = hmm_nuc_sizes >= cutoff
+    hmm_nuc_sizes = hmm_nuc_sizes[hmm_sizing_mask]
+    hmm_nuc_starts = hmm_nuc_starts[hmm_sizing_mask]
+
+    correct_sizes = hmm_nuc_starts[:-1] + hmm_nuc_sizes[:-1] <= hmm_nuc_starts[1:]
+    if not np.all(correct_sizes):
+        logging.warning(f"HMM invalid ranges.")
+    return hmm_nuc_starts, hmm_nuc_sizes
+
+
 def apply_hmm(
     bam,
     hmm,
@@ -238,41 +262,25 @@ def apply_hmm(
             AT_positions,
             methylated_positions,
         ) = get_mods_from_rec(rec, mask=True, ml_cutoff=ml_cutoff)
+
+        # skip if there are no mods
         if binary is None:
             out.write(rec)
             continue
-        # binary of m6A calls in AT space, and AT positions relative to 0-based fiber start
 
+        fiber_length = len(rec.query_sequence)
+
+        # binary of m6A calls in AT space, and AT positions relative to 0-based fiber start
+        # generated terminal is a boolean indicating if we generated a custom
+        # nucleosome until tht terminal end of the fiber
         simple_starts, simple_sizes, generated_terminal = simpleFind(
             methylated_positions, binary, cutoff
         )
 
-        # generated terminal is a boolean indicating if we generated a custom
-        # nucleosome until tht terminal end of the fiber
-
-        state_path = hmm.predict(binary)
-        # print(len(binary))
-
-        lengths, starts, labels = rle(state_path)
-        # starts indicate start in AT binary array
-        # lengths indicates length in AT binary space
-        # labels is the state label
-
-        hmm_nucleosome_mask = labels == nuc_label
-
-        hmm_nuc_ends = AT_positions[
-            np.add(starts[hmm_nucleosome_mask], lengths[hmm_nucleosome_mask] - 1)
-        ]
-        hmm_nuc_starts = AT_positions[starts[hmm_nucleosome_mask]]
-
-        hmm_nuc_sizes = hmm_nuc_ends - hmm_nuc_starts
-
-        hmm_sizing_mask = hmm_nuc_sizes >= cutoff
-
-        hmm_nuc_sizes = hmm_nuc_sizes[hmm_sizing_mask]
-        hmm_nuc_starts = hmm_nuc_starts[hmm_sizing_mask]
-
-        fiber_length = len(rec.query_sequence)
+        # apply hmm
+        hmm_nuc_starts, hmm_nuc_sizes = predict_with_hmm(
+            hmm, binary, nuc_label, AT_positions, cutoff
+        )
 
         # apply the appropriate calling method
         if simple_only:
@@ -333,12 +341,26 @@ def apply_hmm(
             [[front_terminal_nuc_size], all_sizes], dtype=D_TYPE
         )
 
-        # check that the hmm is only making ranges that are possible.
+        # nucs always bookend the fiber, but now changing that here since we are not doing bed12
+        assert (
+            output_starts[0] == 0
+            and output_starts[-1] + output_sizes[-1] == fiber_length
+        )
+        output_starts = output_starts[1:-1]
+        output_sizes = output_sizes[1:-1]
+
+        # check that we are only making ranges that are possible.
         correct_sizes = output_starts[:-1] + output_sizes[:-1] <= output_starts[1:]
         if not np.all(correct_sizes):
             logging.warning(
-                f"HMM made invalid ranges for {rec.query_name} skipping nucelosome calling for fiber"
+                f"Made invalid ranges for {rec.query_name} skipping nucleosome calling for fiber"
             )
+            nuc_ends = output_starts[:-1] + output_sizes[:-1]
+            next_nuc_starts = output_starts[1:]
+            failed = np.column_stack([nuc_ends, next_nuc_starts, output_sizes[:-1]])[
+                ~correct_sizes
+            ]
+            logging.warning(f"Failed: {failed}\n{np.where(~correct_sizes)}")
             out.write(rec)
             continue
 
@@ -346,14 +368,6 @@ def apply_hmm(
         acc_starts = (output_starts + output_sizes)[:-1]
         acc_ends = output_starts[1:]
         acc_sizes = acc_ends - acc_starts
-
-        # nucs always bookend the fiber, but now changing that here
-        assert (
-            output_starts[0] == 0
-            and output_starts[-1] + output_sizes[-1] == fiber_length
-        )
-        output_starts = output_starts[1:-1]
-        output_sizes = output_sizes[1:-1]
 
         # check that nucleosomes are not too close to the ends of the fiber, and have non-zero size
         cond = (
