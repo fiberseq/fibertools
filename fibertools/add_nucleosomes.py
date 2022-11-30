@@ -506,12 +506,12 @@ def add_nucleosomes(args):
     if args.model is None:
         logging.info("Training HMM for nucleosome calling")
         training_set = []
-        for idx, rec in enumerate(bam.fetch(until_eof=True)):
-            mods, _AT_pos, _m6a_pos = get_mods_from_rec(rec, mask=True)
-            if mods is None:
+        for rec in bam.fetch(until_eof=True):
+            mods, _AT_pos, m6a_pos = get_mods_from_rec(rec, mask=True)
+            if mods is None or m6a_pos.shape[0] < args.min_m6a_calls:
                 continue
             training_set.append(mods)
-            if idx >= args.num_train:
+            if len(training_set) >= args.num_train:
                 break
         model = train_hmm(training_set, n_jobs=args.threads)
         json_model = model.to_json()

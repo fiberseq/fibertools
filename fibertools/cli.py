@@ -83,6 +83,12 @@ def make_add_nucleosome_parser(subparsers):
         help="Min value in the ML tag to consider basemod for HMM.",
     )
     parser.add_argument(
+        "--min-m6a-calls",
+        type=int,
+        default=50,
+        help="Minimum number of m6A calls in a fiber to use a fiber for training the HMM.",
+    )
+    parser.add_argument(
         "-c", "--cutoff", type=int, default=65, help="hmm nucleosome size cutoff"
     )
 
