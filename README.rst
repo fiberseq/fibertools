@@ -39,7 +39,7 @@ Features
 ::
 
     usage: fibertools [-h] [-t THREADS] [-v] [-V] {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4} ...
-    
+
     positional arguments:
     {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4}
                             Available subcommand for fibertools
@@ -57,6 +57,20 @@ Features
                             n threads to use (default: 1)
     -v, --verbose         increase logging verbosity (default: False)
     -V, --version         show program's version number and exit
+
+
+Add nucleosomes and MSPs to a fibertools-rs m6A bam
+---------------------------------------------------
+
+Create the model ::
+
+    fibertools add-nucleosomes --input input.bam > model.json
+
+Add nucleosomes with the model::
+
+    fibertools add-nucleosomes --input input.bam --model model.json > output.bam
+
+Note that by default the input bam file is read from stdin and the output bam file is written to stdout.
 
 Credits
 -------
