@@ -507,7 +507,7 @@ def add_nucleosomes(args):
             handle.write(json_model)
     else:
         logging.info("Applying HMM for nucleosome calling")
-        out = pysam.AlignmentFile(args.out, "wb", template=bam)
+        out = pysam.AlignmentFile(args.out, "wb", template=bam, threads=args.threads)
         hmm = pom.HiddenMarkovModel().from_json(args.model)
         _actuated_label, nucleated_label = assign_states(hmm)
         apply_hmm(bam, hmm, nucleated_label, args.cutoff, out, min_dist=args.min_dist)
