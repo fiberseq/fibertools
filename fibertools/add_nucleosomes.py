@@ -217,6 +217,10 @@ def meshMethods(
 
 def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46):
     for rec in tqdm.tqdm(bam.fetch(until_eof=True)):
+        # clear previous calling methods:
+        for tag in ["ns", "nl", "as", "al"]:
+            rec.set_tag(tag, array.array("I", []), replace=True)
+
         (
             binary,
             AT_positions,
