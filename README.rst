@@ -20,17 +20,42 @@ fibertools
 
 
 
-A project for handling fiber-seq data.
+A python package for handling Fiber-seq data.
 
 
 * Free software: MIT license
 * Documentation: https://fibertools.readthedocs.io.
 
+Install 
+-------
+
+```
+pip install fibertools
+```
 
 Features
 --------
 
-* TODO
+```
+usage: fibertools [-h] [-t THREADS] [-v] [-V] {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4} ...
+positional arguments:
+  {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4}
+                        Available subcommand for fibertools
+    bam2bed             Extract m6a calls from bam and output bed12.
+    add-m6a             Add m6A tag
+    add-nucleosomes     Add Nucleosome and MSP tags
+    model               Make MSP features
+    split               Split a bed over many output files.
+    trackhub            Make a trackhub from a bed file.
+    bed2d4              Make a multi-track d4 file from a bed file.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t THREADS, --threads THREADS
+                        n threads to use (default: 1)
+  -v, --verbose         increase logging verbosity (default: False)
+  -V, --version         show program's version number and exit
+```
 
 Credits
 -------
