@@ -359,11 +359,11 @@ def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46):
         if output_sizes.shape[0] > 0:
             rec.set_tag("ns", array.array("I", output_starts_2), replace=True)
             rec.set_tag("nl", array.array("I", output_sizes_2), replace=True)
-            logging.info(f"ns nl set for fiber: {rec.query_name}")
+            logging.debug(f"ns nl set for fiber: {rec.query_name}")
         if acc_sizes.shape[0] > 0:
             rec.set_tag("as", array.array("I", acc_starts_2), replace=True)
             rec.set_tag("al", array.array("I", acc_sizes_2), replace=True)
-            logging.info(f"as al set for fiber: {rec.query_name}")
+            logging.debug(f"as al set for fiber: {rec.query_name}")
         out.write(rec)
 
 
