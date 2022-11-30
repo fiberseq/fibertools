@@ -77,6 +77,12 @@ def make_add_nucleosome_parser(subparsers):
         default=46,
     )
     parser.add_argument(
+        "--ml-cutoff",
+        type=int,
+        default=200,
+        help="Min value in the ML tag to consider basemod for HMM.",
+    )
+    parser.add_argument(
         "-c", "--cutoff", type=int, default=65, help="hmm nucleosome size cutoff"
     )
 
