@@ -91,6 +91,16 @@ def make_add_nucleosome_parser(subparsers):
     parser.add_argument(
         "-c", "--cutoff", type=int, default=65, help="hmm nucleosome size cutoff"
     )
+    parser.add_argument(
+        "--simple-only",
+        help="Use only the simple model for nucleosome calling.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--hmm-only",
+        help="Use only the HMM for nucleosome calling.",
+        action="store_true",
+    )
 
 
 def make_bed_split_parser(subparsers):

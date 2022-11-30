@@ -42,7 +42,7 @@ def train_hmm(data, n_jobs=1):
         n_components=2,
         X=data,
         verbose=False,
-        max_iterations=250,
+        max_iterations=100,
         n_init=10,
         n_jobs=n_jobs,
     )
@@ -217,7 +217,17 @@ def meshMethods(
     # next check that it is flanked by 0s
 
 
-def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46, ml_cutoff=200):
+def apply_hmm(
+    bam,
+    hmm,
+    nuc_label,
+    cutoff,
+    out,
+    min_dist=46,
+    ml_cutoff=200,
+    simple_only=False,
+    hmm_only=False,
+):
     for rec in tqdm.tqdm(bam.fetch(until_eof=True)):
         # clear previous calling methods:
         for tag in ["ns", "nl", "as", "al"]:
@@ -264,15 +274,21 @@ def apply_hmm(bam, hmm, nuc_label, cutoff, out, min_dist=46, ml_cutoff=200):
 
         fiber_length = len(rec.query_sequence)
 
-        all_starts, all_sizes = meshMethods(
-            simple_starts,
-            simple_sizes,
-            hmm_nuc_starts,
-            hmm_nuc_sizes,
-            methylated_positions,
-            fiber_length,
-            cutoff,
-        )
+        # apply the appropriate calling method
+        if simple_only:
+            all_starts, all_sizes = simple_starts, simple_sizes
+        elif hmm_only:
+            all_starts, all_sizes = hmm_nuc_starts, hmm_nuc_sizes
+        else:
+            all_starts, all_sizes = meshMethods(
+                simple_starts,
+                simple_sizes,
+                hmm_nuc_starts,
+                hmm_nuc_sizes,
+                methylated_positions,
+                fiber_length,
+                cutoff,
+            )
 
         output_starts = all_starts
         output_sizes = all_sizes
@@ -536,6 +552,8 @@ def add_nucleosomes(args):
             out,
             min_dist=args.min_dist,
             ml_cutoff=args.ml_cutoff,
+            simple_only=args.simple_only,
+            hmm_only=args.hmm_only,
         )
 
     return 0
