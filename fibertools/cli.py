@@ -85,7 +85,7 @@ def make_add_nucleosome_parser(subparsers):
     parser.add_argument(
         "--min-m6a-calls",
         type=int,
-        default=50,
+        default=200,
         help="Minimum number of m6A calls in a fiber to use a fiber for training the HMM.",
     )
     parser.add_argument(
