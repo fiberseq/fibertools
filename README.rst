@@ -30,9 +30,11 @@ Install::
 -------
     pip install fibertools
 
-Features::
+Features
 --------
-Usage::
+
+::
+
     usage: fibertools [-h] [-t THREADS] [-v] [-V] {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4} ...
     positional arguments:
     {bam2bed,add-m6a,add-nucleosomes,model,split,trackhub,bed2d4}
