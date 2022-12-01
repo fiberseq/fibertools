@@ -66,13 +66,17 @@ def assign_states(model):
 def get_mods_from_rec(
     rec, mods=[("A", 0, "a"), ("T", 1, "a")], mask=True, ml_cutoff=200
 ):
-    if rec.modified_bases is None:
+    if rec.modified_bases_forward is None:
         return None, None, None
     seq = np.frombuffer(bytes(rec.query_sequence, "utf-8"), dtype="S1")
+    # Reverse the seq if reverse strand so we set the mask right later
+    if rec.is_reverse:
+        seq = seq[::-1]
+
     positions = []
     for mod in mods:
-        if mod in rec.modified_bases:
-            all_pos = np.array(rec.modified_bases[mod], dtype=D_TYPE)
+        if mod in rec.modified_bases_forward:
+            all_pos = np.array(rec.modified_bases_forward[mod], dtype=D_TYPE)
             pos = all_pos[all_pos[:, 1] > ml_cutoff, 0]
             positions.append(pos)
     if len(positions) < 1:
@@ -80,6 +84,8 @@ def get_mods_from_rec(
     methylated_positions = np.concatenate(positions, dtype=D_TYPE)
     methylated_positions.sort(kind="mergesort")
 
+    # if on the reverse strand A become T and vice versa so the mask doenst need to be
+    # changes for rev comp
     AT_mask = (seq == b"A") | (seq == b"T")
     AT_positions = np.argwhere(AT_mask).transpose()[0]
 
