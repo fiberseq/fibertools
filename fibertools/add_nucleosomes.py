@@ -6,8 +6,7 @@ import pomegranate as pom
 import array
 import sys
 import tqdm
-
-# from numba import njit, jit
+from numba import njit
 
 D_TYPE = np.int64
 
@@ -284,7 +283,10 @@ def apply_hmm(
 
         # apply the appropriate calling method
         if simple_only:
-            all_starts, all_sizes = simple_starts, simple_sizes
+            all_starts, all_sizes = mrv_simple_caller(methylated_positions, cutoff)
+            # logging.warn(
+            #    f"{np.column_stack((all_starts, all_starts+all_sizes, all_sizes))}"
+            # )
         elif hmm_only:
             all_starts, all_sizes = hmm_nuc_starts, hmm_nuc_sizes
         else:
@@ -404,10 +406,37 @@ def apply_hmm(
         out.write(rec)
 
 
+@njit
+def mrv_simple_caller(methylated_positions, min_nuc_size, max_m6a_in_nuc=2):
+    # previous m6a that marked a nucleosome end
+    prev_pos = -1
+    # number of m6a seen in the current attempt to make a nucleosome
+    cur_m6a_count = 0
+    # starts and lengths of nucleosomes
+    starts = []
+    sizes = []
+    for m6a_pos in methylated_positions:
+        dist = m6a_pos - prev_pos
+        # m6a is far apart or there is only a few m6a here
+        if cur_m6a_count <= max_m6a_in_nuc and dist >= min_nuc_size:
+            starts.append(prev_pos + 1)
+            sizes.append(dist - 1)
+            cur_m6a_count = 0
+            prev_pos = m6a_pos
+        ## if we get to the max m6a count then try staring a new nucleosome at this m6a
+        elif cur_m6a_count >= max_m6a_in_nuc:
+            prev_pos = m6a_pos
+            cur_m6a_count = 0
+        # we are still have few enough m6a marks to be a nuc, but not long enough yet
+        else:
+            cur_m6a_count += 1
+    return np.array(starts), np.array(sizes)
+
+
 def simpleFind(methylated_positions, binary, cutoff):
     """Using an array of methylated positions
     calculate the spacing between each methylation.
-    If the distance between two methylations > 85 then
+    If the distance between two methylations > "cutoff" then
     that is a nucleosome call. Otherwise continue."""
 
     dif = np.subtract(methylated_positions[1:], methylated_positions[:-1], dtype=D_TYPE)
@@ -531,7 +560,7 @@ def simpleFind(methylated_positions, binary, cutoff):
 
         correct_sizes = nuc_starts[:-1] + nuc_sizes[:-1] <= nuc_starts[1:]
         if not np.all(correct_sizes):
-            logging.warning(f"Simple methods made invalid ranges.")
+            logging.debug(f"Simple methods made invalid ranges.")
 
         return (
             all_simple_starts[sort_order],
