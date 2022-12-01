@@ -562,7 +562,7 @@ def simpleFind(methylated_positions, binary, cutoff):
         nuc_sizes = all_simple_sizes[sort_order]
 
         if not np.all(nuc_sizes >= 0):
-            logging.warning(f"Negative nucleosome size detected: {nuc_sizes}")
+            logging.debug(f"Negative nucleosome size detected: {nuc_sizes}")
 
         correct_sizes = nuc_starts[:-1] + nuc_sizes[:-1] <= nuc_starts[1:]
         if not np.all(correct_sizes):
