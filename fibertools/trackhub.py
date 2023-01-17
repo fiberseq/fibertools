@@ -150,7 +150,7 @@ def generate_trackhub(
     trackDb.write(TRACK_COMP.format(sample=sample))
     viz = "dense"
     for i in range(75):
-        trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz))
+        trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample))
         if i >= 50:
             viz = "hide"
 
