@@ -55,7 +55,7 @@ def make_union_d4_from_df(df, genome, group_col, d4_f):
 
     merged = pyd4.D4Merger(d4_f)
     for tag, d4 in sorted(out_files):
-        logging.debug(f"{tag} sum: {pyd4.D4File(d4.name)[tag].sum()}")
+        # logging.debug(f"{tag} sum: {pyd4.D4File(d4.name)[tag].sum()}")
         merged.add_tagged_track("q_" + str(tag), d4.name)
     merged.merge()
     # close files
