@@ -95,7 +95,7 @@ def make_summary_stats(matrix, log_q_values=None, adjust_for_coverage=True):
     if adjust_for_coverage:
         average_q_value = (log_q_vals / cov).mean()
         # logging.debug("Average q-value: " + average_q_value)
-        print("Average: " + average_q_value, file=sys.stderr)
+        print(average_q_value, file=sys.stderr)
         log_q_vals = log_q_vals - cov * average_q_value
     # assert nuc_cov.sum() == link_cov.sum()
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
