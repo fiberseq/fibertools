@@ -20,8 +20,8 @@ trackDb trackDb.txt
 TRACK_COMP = """
 track fiberseq-{sample}
 compositeTrack on
-shortLabel fiberseq
-longLabel fiberseq
+shortLabel fiberseq-{sample}
+longLabel fiberseq-{sample}
 type bigBed 9 +
 maxItems 100000
 maxHeightPixels 200:200:1
@@ -80,19 +80,19 @@ visibility full
 maxHeightPixels 200:200:8
     
     track Accessible 
-    parent fiberseq_coverage
+    parent fiberseq_coverage-{sample}
     bigDataUrl {acc}
     type bigWig
     color 139,0,0
     
     track Linker
-    parent fiberseq_coverage
+    parent fiberseq_coverage-{sample}
     bigDataUrl {link}
     type bigWig
     color 147,112,219
     
     track Nucleosomes 
-    parent fiberseq_coverage
+    parent fiberseq_coverage-{sample}
     bigDataUrl {nuc}
     type bigWig
     color 169,169,169
