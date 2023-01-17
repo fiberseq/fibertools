@@ -84,7 +84,7 @@ def bed2d4(args):
 
 
 @njit(parallel=True)
-def make_summary_stats(matrix, log_q_values=None, average_log_q_value=None):
+def make_summary_stats(matrix, log_q_values=None):
     y = matrix.T
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
     acc_cov = y[:, :-2].sum(axis=1)
@@ -94,6 +94,8 @@ def make_summary_stats(matrix, log_q_values=None, average_log_q_value=None):
     # adjust for expected amount of coverage
     if True:
         average_log_q_value = np.nanmean(log_q_vals / cov)
+        if np.isnan(average_log_q_value):
+            average_log_q_value = 0
         print("Average log q value:")
         print(average_log_q_value)
         print("")
@@ -139,14 +141,10 @@ def make_q_values(in_d4, out_d4):
                 cur_en = ct_len
 
             cur_mat = matrix[ct, cur_st, cur_en]
-            average_log_q_value = -10 * np.log10(0.986)
-
-            logging.debug(f"Average log q value: {average_log_q_value}")
             idx = 0
             for data in make_summary_stats(
                 cur_mat,
                 log_q_values=log_q_values,
-                average_log_q_value=average_log_q_value,
             ):
                 logging.debug(
                     f"Writing {ct} {cur_st} {cur_en} with index {idx} to d4. Mean is {data.mean()}"
