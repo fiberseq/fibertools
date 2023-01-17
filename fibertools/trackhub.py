@@ -4,21 +4,21 @@ import sys
 from .utils import disjoint_bins
 import pandas as pd
 
-hub = """
-hub fiberseq
-shortLabel fiberseq
-longLabel fiberseq
+HUB = """
+hub fiberseq-{sample}
+shortLabel fiberseq-{sample}
+longLabel fiberseq-{sample}
 genomesFile genomes.txt
 email mvollger.edu
 """
 
-genomes = """
+GENOMES = """
 genome {ref}
 trackDb trackDb.txt
 """
 
-track_comp = """
-track fiberseq
+TRACK_COMP = """
+track fiberseq-{sample}
 compositeTrack on
 shortLabel fiberseq
 longLabel fiberseq
@@ -27,9 +27,9 @@ maxItems 100000
 maxHeightPixels 200:200:1
 """
 
-sub_comp_track = """
+SUB_COMP_TRACK = """
     track bin{i}
-    parent fiberseq
+    parent fiberseq-{sample}
     bigDataUrl bins/bin.{i}.bed.bb
     shortLabel bin{i}
     longLabel bin{i}
@@ -40,8 +40,8 @@ sub_comp_track = """
     maxHeightPixels 1:1:1
 """
 
-bw_comp = """
-track FDR_track
+BW_COMP = """
+track FDR_track-{sample}
 compositeTrack on
 shortLabel FDR track
 longLabel FDR track
@@ -52,9 +52,9 @@ maxItems 100000
 maxHeightPixels 200:200:1
 """
 
-bw_template = """
+BW_TEMPLATE = """
     track {nm}
-    parent FDR_track
+    parent FDR_track-{sample}
     bigDataUrl {file}
     shortLabel {nm}
     longLabel {nm}
@@ -66,10 +66,10 @@ bw_template = """
     maxHeightPixels 100:100:1
 """
 
-multi_wig = """
-track fiberseq_coverage
-longLabel fiberseq_coverage
-shortLabel fiberseq_coverage
+MULTI_WIG = """
+track fiberseq_coverage-{sample}
+longLabel fiberseq_coverage-{sample}
+shortLabel fiberseq_coverage-{sample}
 container multiWig
 aggregate stacked
 showSubtrackColorOnUi on
@@ -106,11 +106,12 @@ def generate_trackhub(
     spacer_size=100,
     genome_file="data/hg38.chrom.sizes",
     bw=None,
+    sample="Sample",
 ):
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
 
-    open(f"{trackhub_dir}/hub.txt", "w").write(hub)
-    open(f"{trackhub_dir}/genomes.txt", "w").write(genomes.format(ref=ref))
+    open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
+    open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
     trackDb = open(f"{trackhub_dir}/trackDb.txt", "w")
 
     # write the bins to file
@@ -120,7 +121,7 @@ def generate_trackhub(
     # only run if bigWigs are passed
     if bw is not None:
         os.makedirs(f"{trackhub_dir}/bw", exist_ok=True)
-        trackDb.write(bw_comp)
+        trackDb.write(BW_COMP.format(sample=sample))
         nuc = None
         acc = None
         link = None
@@ -138,16 +139,18 @@ def generate_trackhub(
                 link = file
             else:
                 sys.stderr.write(f"Stacked bigWig!")
-                trackDb.write(bw_template.format(i=idx + 1, nm=nm, file=file))
+                trackDb.write(
+                    BW_TEMPLATE.format(i=idx + 1, nm=nm, file=file, sample=sample)
+                )
 
         if nuc is not None and acc is not None and link is not None:
-            trackDb.write(multi_wig.format(acc=acc, link=link, nuc=nuc))
+            trackDb.write(MULTI_WIG.format(acc=acc, link=link, nuc=nuc, sample=sample))
 
     # bin files
-    trackDb.write(track_comp)
+    trackDb.write(TRACK_COMP.format(sample=sample))
     viz = "dense"
     for i in range(75):
-        trackDb.write(sub_comp_track.format(i=i + 1, viz=viz))
+        trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz))
         if i >= 50:
             viz = "hide"
 

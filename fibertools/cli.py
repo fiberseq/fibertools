@@ -132,6 +132,9 @@ def make_trackhub_parser(subparsers):
         "genome_file", help="A file with chromosome sizes for the genome."
     )
     parser.add_argument("-r", "--ref", default="hg38")
+    parser.add_argument(
+        "--sample", default="Sample", help="Sample name to add to the trackhub."
+    )
     parser.add_argument("-t", "--trackhub-dir", default="trackHub")
     parser.add_argument("--bw", nargs="+", help="bw files to include", default=None)
     parser.add_argument(
@@ -386,6 +389,7 @@ def parse():
             genome_file=args.genome_file,
             spacer_size=args.spacer_size,
             bw=args.bw,
+            sample=args.sample,
         )
     elif args.command == "bed2d4":
         if args.fdr:
