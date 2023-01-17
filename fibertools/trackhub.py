@@ -77,7 +77,7 @@ type bigWig 0 1000
 autoScale on
 alwaysZero on
 visibility full
-maxHeightPixels 100:32:8
+maxHeightPixels 200:200:8
     
     track Accessible 
     parent fiberseq_coverage

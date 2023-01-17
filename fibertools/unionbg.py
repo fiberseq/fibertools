@@ -108,9 +108,6 @@ def make_q_values(in_d4, out_d4):
     log_q_values = -10 * np.log10(q_values[:-2])
     one_minus_q_values = 1 - q_values[:-2]
 
-    # average_log_q_value = -10 * np.log10(q_values.mean())
-    average_log_q_value = -10 * np.log10(0.986)
-    logging.debug(f"Average log q value: {average_log_q_value}")
     logging.debug(f"chroms: {chroms}")
 
     # output file
@@ -138,6 +135,9 @@ def make_q_values(in_d4, out_d4):
                 cur_en = ct_len
 
             cur_mat = matrix[ct, cur_st, cur_en]
+            average_log_q_value = -10 * np.log10(0.986)
+
+            logging.debug(f"Average log q value: {average_log_q_value}")
             idx = 0
             for data in make_summary_stats(
                 cur_mat,
