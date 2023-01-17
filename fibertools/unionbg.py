@@ -93,7 +93,7 @@ def make_summary_stats(matrix, log_q_values=None, average_log_q_value=None):
     cov = acc_cov + link_cov + nuc_cov
     # adjust for expected amount of coverage
     if True:
-        average_log_q_value = (log_q_vals / cov).mean()
+        average_log_q_value = (log_q_vals / cov).nanmean()
         print("Average log q value:")
         print(average_log_q_value)
         print("")
