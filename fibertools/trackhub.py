@@ -28,7 +28,7 @@ maxHeightPixels 200:200:1
 """
 
 SUB_COMP_TRACK = """
-    track bin{i}
+    track bin{i}-{sample}
     parent fiberseq-{sample}
     bigDataUrl bins/bin.{i}.bed.bb
     shortLabel bin{i}
@@ -41,7 +41,7 @@ SUB_COMP_TRACK = """
 """
 
 BW_COMP = """
-track FDR_track-{sample}
+track FDR-track-{sample}
 compositeTrack on
 shortLabel FDR track
 longLabel FDR track
@@ -54,7 +54,7 @@ maxHeightPixels 200:200:1
 
 BW_TEMPLATE = """
     track {nm}
-    parent FDR_track-{sample}
+    parent FDR-track-{sample}
     bigDataUrl {file}
     shortLabel {nm}
     longLabel {nm}
@@ -67,9 +67,9 @@ BW_TEMPLATE = """
 """
 
 MULTI_WIG = """
-track fiberseq_coverage-{sample}
-longLabel fiberseq_coverage-{sample}
-shortLabel fiberseq_coverage-{sample}
+track fiberseq-coverage-{sample}
+longLabel fiberseq-coverage-{sample}
+shortLabel fiberseq-coverage-{sample}
 container multiWig
 aggregate stacked
 showSubtrackColorOnUi on
@@ -80,19 +80,19 @@ visibility full
 maxHeightPixels 200:200:8
     
     track Accessible 
-    parent fiberseq_coverage-{sample}
+    parent fiberseq-coverage-{sample}
     bigDataUrl {acc}
     type bigWig
     color 139,0,0
     
     track Linker
-    parent fiberseq_coverage-{sample}
+    parent fiberseq-coverage-{sample}
     bigDataUrl {link}
     type bigWig
     color 147,112,219
     
     track Nucleosomes 
-    parent fiberseq_coverage-{sample}
+    parent fiberseq-coverage-{sample}
     bigDataUrl {nuc}
     type bigWig
     color 169,169,169
