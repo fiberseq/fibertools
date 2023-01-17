@@ -191,7 +191,7 @@ class Fiberdata_rs:
         df["score"] = 1
         df["strand"] = "+"
         df["tst"] = df["st"]
-        df["ten"] = df["en"]
+        df["ten"] = df["st"]
         df["color"] = "230,230,230"
         df["qValue"] = 1
         logging.debug(f"Finished expanding into individual nucleosomes. {df.shape[0]}")
