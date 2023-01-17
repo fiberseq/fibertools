@@ -106,7 +106,7 @@ def make_q_values(in_d4, out_d4):
     # these are the q values
     q_values = np.array([max(int(x.strip("q_")) / 100, 0.01) for x in track_names])
     log_q_values = -10 * np.log10(q_values[:-2])
-    average_log_q_value = log_q_values[log_q_values < 100].mean()
+    average_log_q_value = -10 * np.log10(q_values.mean())
     logging.debug(f"Average log q value: {average_log_q_value}")
     one_minus_q_values = 1 - q_values[:-2]
 
