@@ -46,7 +46,7 @@ compositeTrack on
 shortLabel FDR track
 longLabel FDR track
 type bigWig 0 1000
-visibility dense
+visibility full
 autoScale on
 maxItems 100000
 maxHeightPixels 200:200:1
