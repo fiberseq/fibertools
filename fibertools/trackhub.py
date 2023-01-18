@@ -56,8 +56,9 @@ BW_TEMPLATE = """
     track {nm}
     parent FDR-track-{sample}
     bigDataUrl {file}
-    shortLabel {nm}
-    longLabel {nm}
+    parent FDR-track-{sample}
+    shortLabel FDR-{sample}-{nm}
+    longLabel FDR-{sample}-{nm}
     type bigWig
     autoScale on
     alwaysZero on
