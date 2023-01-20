@@ -605,6 +605,7 @@ def add_nucleosomes(args):
         out = pysam.AlignmentFile(args.out, "wb", template=bam, threads=args.threads)
         hmm = pom.HiddenMarkovModel().from_json(args.model)
         _actuated_label, nucleated_label = assign_states(hmm)
+        logging.warning(f"Min nucleosome size is {args.nuc_size_cutoff}}")
         apply_hmm(
             bam,
             hmm,
