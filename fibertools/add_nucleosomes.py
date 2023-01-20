@@ -106,6 +106,7 @@ def meshMethods(
     methylated_positions,
     fiber_length,
     cutoff,
+    nuc_size_cutoff,
 ):
 
     ###FILTERS TO IMPLEMENT ########
@@ -214,7 +215,7 @@ def meshMethods(
     nucleosome_starts = nucleosome_starts[sort_order]
     nucleosome_sizes = nucleosome_sizes[sort_order]
 
-    min_nuc_size_mask = nucleosome_sizes >= cutoff
+    min_nuc_size_mask = nucleosome_sizes >= nuc_size_cutoff
 
     return nucleosome_starts[min_nuc_size_mask], nucleosome_sizes[min_nuc_size_mask]
     # grab valid hmm calls and bookend to be min length
@@ -305,11 +306,11 @@ def apply_hmm(
                 methylated_positions,
                 fiber_length,
                 cutoff,
+                nuc_size_cutoff,
             )
 
-        min_nuc_size_mask = all_sizes >= nuc_size_cutoff
-        output_starts = all_starts[min_nuc_size_mask]
-        output_sizes = all_sizes[min_nuc_size_mask]
+        output_starts = all_starts
+        output_sizes = all_sizes
 
         # no nucleosomes found, continue
         if methylated_positions.shape[0] == 0 or output_sizes.shape[0] == 0:
