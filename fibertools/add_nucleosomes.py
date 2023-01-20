@@ -307,7 +307,7 @@ def apply_hmm(
                 cutoff,
             )
 
-        min_nuc_size_mask = output_sizes >= nuc_size_cutoff
+        min_nuc_size_mask = all_sizes >= nuc_size_cutoff
         output_starts = all_starts[min_nuc_size_mask]
         output_sizes = all_sizes[min_nuc_size_mask]
 
