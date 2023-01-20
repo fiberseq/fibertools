@@ -251,6 +251,7 @@ def apply_hmm(
     hmm,
     nuc_label,
     cutoff,
+    nuc_size_cutoff,
     out,
     min_dist=46,
     ml_cutoff=200,
@@ -306,8 +307,9 @@ def apply_hmm(
                 cutoff,
             )
 
-        output_starts = all_starts
-        output_sizes = all_sizes
+        min_nuc_size_mask = output_sizes >= nuc_size_cutoff
+        output_starts = all_starts[min_nuc_size_mask]
+        output_sizes = all_sizes[min_nuc_size_mask]
 
         # no nucleosomes found, continue
         if methylated_positions.shape[0] == 0 or output_sizes.shape[0] == 0:
@@ -608,6 +610,7 @@ def add_nucleosomes(args):
             hmm,
             nucleated_label,
             args.cutoff,
+            args.nuc_size_cutoff,
             out,
             min_dist=args.min_dist,
             ml_cutoff=args.ml_cutoff,

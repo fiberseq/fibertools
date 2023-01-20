@@ -89,7 +89,10 @@ def make_add_nucleosome_parser(subparsers):
         help="Minimum number of m6A calls in a fiber to use a fiber for training the HMM.",
     )
     parser.add_argument(
-        "-c", "--cutoff", type=int, default=65, help="Nucleosome size cutoff"
+        "-c", "--cutoff", type=int, default=65, help="Internal nucleosome size cutoff"
+    )
+    parser.add_argument(
+        "--nuc-size-cutoff", type=int, default=85, help="Final nucleosome size cutoff"
     )
     parser.add_argument(
         "--simple-only",
