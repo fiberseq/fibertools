@@ -58,14 +58,10 @@ def n_overlaps(a_df, b_df):
         numpy array: array with overlap counts.
     """
     a = pr.PyRanges(
-        chromosomes=a_df.ct.to_list(),
-        starts=a_df.st.to_list(),
-        ends=a_df.en.to_list(),
+        chromosomes=a_df.ct.to_list(), starts=a_df.st.to_list(), ends=a_df.en.to_list(),
     )
     b = pr.PyRanges(
-        chromosomes=b_df.ct.to_list(),
-        starts=b_df.st.to_list(),
-        ends=b_df.en.to_list(),
+        chromosomes=b_df.ct.to_list(), starts=b_df.st.to_list(), ends=b_df.en.to_list(),
     )
     return a.count_overlaps(b).NumberOverlaps.values
 

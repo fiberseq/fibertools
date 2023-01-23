@@ -264,11 +264,9 @@ def apply_hmm(
         for tag in ["ns", "nl", "as", "al"]:
             rec.set_tag(tag, array.array("I", []), replace=True)
 
-        (
-            binary,
-            AT_positions,
-            methylated_positions,
-        ) = get_mods_from_rec(rec, mask=True, ml_cutoff=ml_cutoff)
+        (binary, AT_positions, methylated_positions,) = get_mods_from_rec(
+            rec, mask=True, ml_cutoff=ml_cutoff
+        )
 
         # skip if there are no mods
         if binary is None:

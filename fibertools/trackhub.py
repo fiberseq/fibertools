@@ -1,8 +1,10 @@
-from email import header
 import os
 import sys
 from .utils import disjoint_bins
 import pandas as pd
+import logging
+
+MAX_BINS = 75
 
 HUB = """
 hub fiberseq-{sample}
@@ -101,11 +103,8 @@ maxHeightPixels 200:200:8
 
 
 def generate_trackhub(
-    df,
     trackhub_dir="trackHub",
     ref="hg38",
-    spacer_size=100,
-    genome_file="data/hg38.chrom.sizes",
     bw=None,
     sample="Sample",
 ):
@@ -114,10 +113,6 @@ def generate_trackhub(
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
     open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
     trackDb = open(f"{trackhub_dir}/trackDb.txt", "w")
-
-    # write the bins to file
-    os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
-    os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
 
     # only run if bigWigs are passed
     if bw is not None:
@@ -129,7 +124,6 @@ def generate_trackhub(
         for idx, bw_f in enumerate(bw):
             base = os.path.basename(bw_f)
             nm = base.rstrip(".bw")
-            # file = f"{trackhub_dir}/bw/{base}"
             file = f"bw/{base}"
             sys.stderr.write(f"{bw_f}\t{nm}\t{file}\n")
             if nm == "nuc":
@@ -147,16 +141,26 @@ def generate_trackhub(
         if nuc is not None and acc is not None and link is not None:
             trackDb.write(MULTI_WIG.format(acc=acc, link=link, nuc=nuc, sample=sample))
 
-    # bin files
-    trackDb.write(TRACK_COMP.format(sample=sample))
-    viz = "dense"
-    for i in range(75):
-        trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample))
-        if i >= 50:
-            viz = "hide"
+        # bin files
+        trackDb.write(TRACK_COMP.format(sample=sample))
+        viz = "dense"
+        for i in range(MAX_BINS):
+            trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample))
+            if i >= 50:
+                viz = "hide"
+        # done with track db
+        trackDb.close()
 
-    # done with track db
-    trackDb.close()
+
+def make_bins(
+    df,
+    trackhub_dir="trackHub",
+    spacer_size=100,
+    genome_file="data/hg38.chrom.sizes",
+):
+    # write the bins to file
+    os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
+    os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
 
     fiber_df = (
         df.groupby(["#ct", "fiber"])
@@ -164,14 +168,17 @@ def generate_trackhub(
         .reset_index()
         .sort_values(["#ct", "st", "en"])
     )
+    logging.info("Made fiber df.")
     fiber_df["bin"] = disjoint_bins(
         fiber_df["#ct"], fiber_df.st, fiber_df.en, spacer_size=spacer_size
     )
+    logging.info("Made binned fibers")
+
     df = df.merge(fiber_df[["fiber", "bin"]], on=["fiber"])
     for cur_bin in sorted(df.bin.unique()):
-        if cur_bin > 75:
+        if cur_bin > MAX_BINS:
             continue
-        sys.stderr.write(f"\r{cur_bin}")
+        logging.info(f"Writting {cur_bin}.")
         out_file = f"{trackhub_dir}/bed/bin.{cur_bin}.bed"
         bb_file = f"{trackhub_dir}/bins/bin.{cur_bin}.bed.bb"
         (

@@ -7,7 +7,7 @@ import sys
 import logging
 from typing_extensions import Required
 from fibertools.readutils import read_in_bed_file
-from fibertools.trackhub import generate_trackhub
+from fibertools.trackhub import generate_trackhub, make_bins
 from fibertools.unionbg import bed2d4, make_q_values
 from fibertools.add_nucleosomes import add_nucleosomes
 import fibertools as ft
@@ -51,16 +51,10 @@ def make_add_nucleosome_parser(subparsers):
         default=sys.stdin,
     )
     parser.add_argument(
-        "-o",
-        "--out",
-        help="Output bam or json file.",
-        default="-",
+        "-o", "--out", help="Output bam or json file.", default="-",
     )
     parser.add_argument(
-        "-m",
-        "--model",
-        help="pretrained hmm model (json).",
-        default=None,
+        "-m", "--model", help="pretrained hmm model (json).", default=None,
     )
     parser.add_argument(
         "-n",
@@ -306,9 +300,7 @@ def parse():
         description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     subparsers = parser.add_subparsers(
-        dest="command",
-        help="Available subcommand for fibertools",
-        required=True,
+        dest="command", help="Available subcommand for fibertools", required=True,
     )
     make_bam2bed_parser(subparsers)
     make_add_m6a_parser(subparsers)
@@ -384,16 +376,22 @@ def parse():
     elif args.command == "split":
         split_bed_over_files(args)
     elif args.command == "trackhub":
-        df = pd.read_csv(args.bed, sep="\t", nrows=args.n_rows)
         generate_trackhub(
-            df,
             trackhub_dir=args.trackhub_dir,
             ref=args.ref,
-            genome_file=args.genome_file,
-            spacer_size=args.spacer_size,
             bw=args.bw,
             sample=args.sample,
         )
+        logging.info("Reading FDR bed.")
+        df = pd.read_csv(args.bed, sep="\t", nrows=args.n_rows)
+        logging.info("Read FDR bed.")
+        make_bins(
+            df,
+            trackhub_dir=args.trackhub_dir,
+            spacer_size=args.spacer_size,
+            genome_file=args.genome_file,
+        )
+
     elif args.command == "bed2d4":
         if args.fdr:
             logging.debug("Making fdr peaks.")

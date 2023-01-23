@@ -31,12 +31,7 @@ def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
         "5mC",
         "ref_5mC",
     ]
-    df = pl.read_csv(
-        f,
-        sep="\t",
-        n_rows=n_rows,
-        null_values=["."],
-    )
+    df = pl.read_csv(f, sep="\t", n_rows=n_rows, null_values=["."],)
     # clean up comment char
     df.columns = list(map(lambda x: x.strip("#"), df.columns))
 

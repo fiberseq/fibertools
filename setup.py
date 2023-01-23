@@ -56,11 +56,7 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     description="A project for handling fiber-seq data.",
-    entry_points={
-        "console_scripts": [
-            "fibertools=fibertools.fibertools:main",
-        ],
-    },
+    entry_points={"console_scripts": ["fibertools=fibertools.fibertools:main",],},
     install_requires=requirements,
     license="MIT license",
     long_description=readme + "\n\n" + history,
