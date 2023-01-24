@@ -106,6 +106,7 @@ def make_summary_stats(matrix, log_q_values=None):
 
 
 def make_q_values(in_d4, out_d4):
+    logging.info(f"Reading in d4 file: {in_d4}")
     file = pyd4.D4File(in_d4)
     chroms = file.chroms()
     matrix = file.open_all_tracks()
