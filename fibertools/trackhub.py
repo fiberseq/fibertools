@@ -220,9 +220,8 @@ def make_bins(
     df = df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
     logging.info("Made binned fibers")
     # for cur_bin in sorted(df["bin"].unique()):
-    for cur_bin, cur_df in df.partition_by(
-        groups="bin", maintain_order=True, as_dict=True
-    ).items():
+    for cur_bin, cur_df in df.partition_by(groups="bin", as_dict=True).items():
+        # maintain_order=True,
         if cur_bin > max_bins:
             continue
         logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
