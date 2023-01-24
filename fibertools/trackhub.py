@@ -196,27 +196,27 @@ def make_bins(
     genome_file="data/hg38.chrom.sizes",
     max_bins=None,
 ):
-    df.columns = [c.strip("#") for c in df.columns]
+    # df.columns = [c.strip("#") for c in df.columns]
 
     # write the bins to file
     os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
     os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
     logging.info(f"{df}")
     fiber_df = (
-        df.lazy()
-        .groupby(["ct", "fiber"])
+        df.groupby(["#ct", "fiber"])
         .agg([pl.min("st"), pl.max("en")])
-        .sort(["ct", "st", "en"])
+        .sort(["#ct", "st", "en"])
     ).collect()
     logging.info("Made fiber df.")
     bins = disjoint_bins(
-        fiber_df["ct"], fiber_df["st"], fiber_df["en"], spacer_size=spacer_size
+        fiber_df["#ct"], fiber_df["st"], fiber_df["en"], spacer_size=spacer_size
     )
     fiber_df = fiber_df.with_column(
         pl.Series(bins).alias("bin"),
     )
+    logging.info(f"{fiber_df}")
     logging.info("Merging with bins.")
-    df = df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
+    df = df.collect().join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
     logging.info("Made binned fibers")
     # for cur_bin in sorted(df["bin"].unique()):
     for cur_bin, cur_df in df.partition_by(
@@ -227,7 +227,7 @@ def make_bins(
         logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
         out_file = f"{trackhub_dir}/bed/bin.{cur_bin}.bed"
         bb_file = f"{trackhub_dir}/bins/bin.{cur_bin}.bed.bb"
-        cur_df.select(cur_df.columns[0:9]).sort(["ct", "st", "en"]).write_csv(
+        cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
             out_file, sep="\t", has_header=False
         )
         os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
