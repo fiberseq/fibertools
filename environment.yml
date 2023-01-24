@@ -21,6 +21,7 @@ dependencies:
     - rust # skip, needed for pyd4, ==1.61.0
     - pip>=20.1 # pip is needed as dependency
     - sorted_nearest
+    - psutil
     - pip:
           - sphinx_rtd_theme
           - readthedocs-sphinx-search

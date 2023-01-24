@@ -4,6 +4,12 @@ from .utils import disjoint_bins
 import pandas as pd
 import logging
 import polars as pl
+import psutil
+
+
+def log_mem_usage():
+    gb = psutil.Process(os.getpid()).memory_info().rss / 1024**3
+    logging.info(f"Using {gb:.2f} GB of memory")
 
 
 HUB = """
@@ -202,6 +208,7 @@ def make_bins(
     os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
     os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
     logging.info(f"{df}")
+    log_mem_usage()
     fiber_df = (
         df.lazy()
         .groupby(["#ct", "fiber"])
@@ -218,12 +225,14 @@ def make_bins(
     logging.info(f"{fiber_df}")
     logging.info("Merging with bins.")
     logging.info("Made binned fibers")
+    log_mem_usage()
     # for cur_bin in sorted(df["bin"].unique()):
     for cur_bin, cur_df in (
         df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
         .partition_by(groups="bin", as_dict=True)
         .items()
     ):
+        log_mem_usage()
         # maintain_order=True,
         if cur_bin > max_bins:
             continue
