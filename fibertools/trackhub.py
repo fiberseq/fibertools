@@ -217,10 +217,13 @@ def make_bins(
     )
     logging.info(f"{fiber_df}")
     logging.info("Merging with bins.")
-    df = df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
     logging.info("Made binned fibers")
     # for cur_bin in sorted(df["bin"].unique()):
-    for cur_bin, cur_df in df.partition_by(groups="bin", as_dict=True).items():
+    for cur_bin, cur_df in (
+        df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
+        .partition_by(groups="bin", as_dict=True)
+        .items()
+    ):
         # maintain_order=True,
         if cur_bin > max_bins:
             continue
