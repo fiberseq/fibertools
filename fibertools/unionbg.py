@@ -7,6 +7,7 @@ import logging
 import fibertools as ft
 import polars as pl
 import sys
+import os
 
 
 @njit
@@ -142,6 +143,7 @@ def make_q_values(in_d4, out_d4):
             if cur_en <= cur_st:
                 break
             logging.info(f"Processing {ct} {cur_st} {cur_en}")
+            logging.info(os.path.exists(in_d4))
             cur_mat = matrix[ct, cur_st, cur_en]
             idx = 0
             for data in make_summary_stats(
