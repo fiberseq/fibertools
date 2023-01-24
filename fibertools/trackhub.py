@@ -217,7 +217,7 @@ def make_bins(
     )
     logging.info(f"{fiber_df}")
     logging.info("Merging with bins.")
-    df = df.collect().join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
+    df = df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
     logging.info("Made binned fibers")
     # for cur_bin in sorted(df["bin"].unique()):
     for cur_bin, cur_df in df.partition_by(
