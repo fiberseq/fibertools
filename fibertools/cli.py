@@ -400,7 +400,7 @@ def parse():
         )
         logging.info("Reading FDR bed.")
         # df = pd.read_csv(args.bed, sep="\t", nrows=args.n_rows)
-        df = pl.scan_csv(
+        df = pl.read_csv(
             args.bed, sep="\t", stop_after_n_rows=args.n_rows, comment_char="$"
         )
         logging.info("Read FDR bed.")

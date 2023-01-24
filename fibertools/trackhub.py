@@ -203,7 +203,8 @@ def make_bins(
     os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
     logging.info(f"{df}")
     fiber_df = (
-        df.groupby(["#ct", "fiber"])
+        df.lazy()
+        .groupby(["#ct", "fiber"])
         .agg([pl.min("st"), pl.max("en")])
         .sort(["#ct", "st", "en"])
     ).collect()
