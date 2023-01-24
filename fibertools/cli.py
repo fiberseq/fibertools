@@ -14,6 +14,7 @@ import fibertools as ft
 import numpy as np
 import gzip
 import pandas as pd
+import polars as pl
 
 
 def make_bam2bed_parser(subparsers):
@@ -51,10 +52,16 @@ def make_add_nucleosome_parser(subparsers):
         default=sys.stdin,
     )
     parser.add_argument(
-        "-o", "--out", help="Output bam or json file.", default="-",
+        "-o",
+        "--out",
+        help="Output bam or json file.",
+        default="-",
     )
     parser.add_argument(
-        "-m", "--model", help="pretrained hmm model (json).", default=None,
+        "-m",
+        "--model",
+        help="pretrained hmm model (json).",
+        default=None,
     )
     parser.add_argument(
         "-n",
@@ -139,6 +146,12 @@ def make_trackhub_parser(subparsers):
         help="adjust minimum distance between fibers for them to be in the same bin.",
         type=int,
         default=100,
+    )
+    parser.add_argument(
+        "--max-bins",
+        help="Max number of dijoint bins to plot.",
+        type=int,
+        default=75,
     )
     parser.add_argument(
         "-n",
@@ -300,7 +313,9 @@ def parse():
         description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     subparsers = parser.add_subparsers(
-        dest="command", help="Available subcommand for fibertools", required=True,
+        dest="command",
+        help="Available subcommand for fibertools",
+        required=True,
     )
     make_bam2bed_parser(subparsers)
     make_add_m6a_parser(subparsers)
@@ -381,15 +396,18 @@ def parse():
             ref=args.ref,
             bw=args.bw,
             sample=args.sample,
+            max_bins=args.max_bins,
         )
         logging.info("Reading FDR bed.")
-        df = pd.read_csv(args.bed, sep="\t", nrows=args.n_rows)
+        # df = pd.read_csv(args.bed, sep="\t", nrows=args.n_rows)
+        df = pl.read_csv(args.bed, sep="\t", nrows=args.n_rows, comment_char="$")
         logging.info("Read FDR bed.")
         make_bins(
             df,
             trackhub_dir=args.trackhub_dir,
             spacer_size=args.spacer_size,
             genome_file=args.genome_file,
+            max_bins=args.max_bins,
         )
 
     elif args.command == "bed2d4":

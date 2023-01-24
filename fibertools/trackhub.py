@@ -3,8 +3,8 @@ import sys
 from .utils import disjoint_bins
 import pandas as pd
 import logging
+import polars as pl
 
-MAX_BINS = 75
 
 HUB = """
 hub fiberseq-{sample}
@@ -103,10 +103,7 @@ maxHeightPixels 200:200:8
 
 
 def generate_trackhub(
-    trackhub_dir="trackHub",
-    ref="hg38",
-    bw=None,
-    sample="Sample",
+    trackhub_dir="trackHub", ref="hg38", bw=None, sample="Sample", max_bins=None
 ):
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
 
@@ -144,7 +141,7 @@ def generate_trackhub(
         # bin files
         trackDb.write(TRACK_COMP.format(sample=sample))
         viz = "dense"
-        for i in range(MAX_BINS):
+        for i in range(max_bins):
             trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample))
             if i >= 50:
                 viz = "hide"
@@ -152,11 +149,12 @@ def generate_trackhub(
         trackDb.close()
 
 
-def make_bins(
+def make_bins_old(
     df,
     trackhub_dir="trackHub",
     spacer_size=100,
     genome_file="data/hg38.chrom.sizes",
+    max_bins=None,
 ):
     # write the bins to file
     os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
@@ -176,7 +174,7 @@ def make_bins(
 
     df = df.merge(fiber_df[["fiber", "bin"]], on=["fiber"])
     for cur_bin in sorted(df.bin.unique()):
-        if cur_bin > MAX_BINS:
+        if cur_bin > max_bins:
             continue
         logging.info(f"Writting {cur_bin}.")
         out_file = f"{trackhub_dir}/bed/bin.{cur_bin}.bed"
@@ -186,6 +184,51 @@ def make_bins(
             .loc[df.bin == cur_bin]
             .sort_values(["#ct", "st", "en"])
             .to_csv(out_file, sep="\t", index=False, header=False)
+        )
+        os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
+        os.system(f"rm {out_file}")
+
+
+def make_bins(
+    df,
+    trackhub_dir="trackHub",
+    spacer_size=100,
+    genome_file="data/hg38.chrom.sizes",
+    max_bins=None,
+):
+    df.columns = [c.strip("#") for c in df.columns]
+
+    # write the bins to file
+    os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
+    os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
+    logging.info(f"{df}")
+    fiber_df = (
+        df.lazy()
+        .groupby(["ct", "fiber"])
+        .agg([pl.min("st"), pl.max("en")])
+        .sort(["ct", "st", "en"])
+    ).collect()
+    logging.info("Made fiber df.")
+    bins = disjoint_bins(
+        fiber_df["ct"], fiber_df["st"], fiber_df["en"], spacer_size=spacer_size
+    )
+    fiber_df = fiber_df.with_column(
+        pl.Series(bins).alias("bin"),
+    )
+    logging.info("Merging with bins.")
+    df = df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
+    logging.info("Made binned fibers")
+    # for cur_bin in sorted(df["bin"].unique()):
+    for cur_bin, cur_df in df.partition_by(
+        groups="bin", maintain_order=True, as_dict=True
+    ).items():
+        if cur_bin > max_bins:
+            continue
+        logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
+        out_file = f"{trackhub_dir}/bed/bin.{cur_bin}.bed"
+        bb_file = f"{trackhub_dir}/bins/bin.{cur_bin}.bed.bb"
+        cur_df.select(cur_df.columns[0:9]).sort(["ct", "st", "en"]).write_csv(
+            out_file, sep="\t", has_header=False
         )
         os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
         os.system(f"rm {out_file}")
