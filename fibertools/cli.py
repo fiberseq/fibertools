@@ -220,9 +220,9 @@ def make_accessibility_model_parser(subparsers):
     )
     parser.add_argument(
         "--min-tp-msp-len",
-        help="min msp length to be in the DHS positive training set.",
+        help="Minimum MSP length to be in the DHS positive training set for Mokapot.",
         type=int,
-        default=40,
+        default=85,
     )
     parser.add_argument(
         "--spacer-size",
