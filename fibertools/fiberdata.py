@@ -126,7 +126,7 @@ class Fiberdata_rs:
         )
         self.features = out
 
-    def make_percolator_input(self, dhs_df=None, sort=False, min_tp_msp_len=40):
+    def make_percolator_input(self, dhs_df=None, sort=False, min_tp_msp_len=85):
         """write a input file that works with percolator.
 
         Args:
