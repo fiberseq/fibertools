@@ -61,10 +61,12 @@ class Fiberdata:
             columns=[f"m6a_frac_{i}" for i in range(bin_num)],
         )
         m6a_counts = pd.DataFrame(
-            z["m6a_count"].tolist(), columns=[f"m6a_count_{i}" for i in range(bin_num)],
+            z["m6a_count"].tolist(),
+            columns=[f"m6a_count_{i}" for i in range(bin_num)],
         )
         AT_counts = pd.DataFrame(
-            z["AT_count"].tolist(), columns=[f"AT_count_{i}" for i in range(bin_num)],
+            z["AT_count"].tolist(),
+            columns=[f"AT_count_{i}" for i in range(bin_num)],
         )
         out = (
             pd.concat([z, m6a_fracs, m6a_counts, AT_counts], axis=1)

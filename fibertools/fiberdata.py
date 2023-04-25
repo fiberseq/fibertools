@@ -148,9 +148,7 @@ class Fiberdata_rs:
             out_df.loc[dhs_null > 0, "Label"] = -1
 
             # if the msp is short make it a non informative label
-            out_df.loc[
-                (dhs_true > 0) & (out_df.msp_len <= min_tp_msp_len), "Label"
-            ] = 0
+            out_df.loc[(dhs_true > 0) & (out_df.msp_len <= min_tp_msp_len), "Label"] = 0
         else:
             # has no effect, percolator just needs some items to have positive labels
             out_df.loc[out_df.msp_len >= min_tp_msp_len, "Label"] = 1

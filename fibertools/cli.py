@@ -142,6 +142,28 @@ def make_trackhub_parser(subparsers):
     parser.add_argument("-t", "--trackhub-dir", default="trackHub")
     parser.add_argument("--bw", nargs="+", help="bw files to include", default=None)
     parser.add_argument(
+        "--max-bins",
+        help="Max number of dijoint bins to plot.",
+        type=int,
+        default=75,
+    )
+    parser.add_argument(
+        "-n",
+        "--n-rows",
+        help="For debugging only reads in n rows.",
+        type=int,
+        default=None,
+    )
+
+
+def make_bin_parser(subparsers):
+    parser = subparsers.add_parser(
+        "bin",
+        help="Make a binned version of the bed file (add an extra column).",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument("bed", help="A bed file")
+    parser.add_argument(
         "--spacer-size",
         help="adjust minimum distance between fibers for them to be in the same bin.",
         type=int,
@@ -323,6 +345,7 @@ def parse():
     make_accessibility_model_parser(subparsers)
     make_bed_split_parser(subparsers)
     make_trackhub_parser(subparsers)
+    make_bin_parser(subparsers)
     make_bed2d4_parser(subparsers)
     # shared arguments
     parser.add_argument("-t", "--threads", help="n threads to use", type=int, default=1)
@@ -398,12 +421,10 @@ def parse():
             sample=args.sample,
             max_bins=args.max_bins,
         )
-        logging.info("Reading FDR bed.")
-        # df = pd.read_csv(args.bed, sep="\t", nrows=args.n_rows)
-        df = pl.read_csv(
-            args.bed, sep="\t", stop_after_n_rows=args.n_rows, comment_char="$"
-        )
-        logging.info("Read FDR bed.")
+    elif args.command == "bin":
+        logging.info("Reading bed.")
+        df = ft.utils.read_bed_with_header(args.bed, n_rows=args.n_rows)
+        logging.info("Done reading bed.")
         make_bins(
             df,
             trackhub_dir=args.trackhub_dir,
@@ -411,7 +432,6 @@ def parse():
             genome_file=args.genome_file,
             max_bins=args.max_bins,
         )
-
     elif args.command == "bed2d4":
         if args.fdr:
             logging.debug("Making fdr peaks.")

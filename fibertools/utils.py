@@ -6,9 +6,19 @@ import logging
 import fibertools as ft
 import pyranges as pr
 import pickle
+import io
+import sys
 
 numba_logger = logging.getLogger("numba")
 numba_logger.setLevel(logging.WARNING)
+
+
+def read_bed_with_header(bed, n_rows=None):
+    input = bed
+    if bed == "-":
+        input = io.StringIO(sys.stdin.read())
+    df = pl.read_csv(input, sep="\t", stop_after_n_rows=n_rows, comment_char="$")
+    return df
 
 
 def split_to_ints(df, col, sep=",", trim=True):
@@ -58,10 +68,14 @@ def n_overlaps(a_df, b_df):
         numpy array: array with overlap counts.
     """
     a = pr.PyRanges(
-        chromosomes=a_df.ct.to_list(), starts=a_df.st.to_list(), ends=a_df.en.to_list(),
+        chromosomes=a_df.ct.to_list(),
+        starts=a_df.st.to_list(),
+        ends=a_df.en.to_list(),
     )
     b = pr.PyRanges(
-        chromosomes=b_df.ct.to_list(), starts=b_df.st.to_list(), ends=b_df.en.to_list(),
+        chromosomes=b_df.ct.to_list(),
+        starts=b_df.st.to_list(),
+        ends=b_df.en.to_list(),
     )
     return a.count_overlaps(b).NumberOverlaps.values
 
