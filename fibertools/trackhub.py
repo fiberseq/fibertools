@@ -195,7 +195,7 @@ def make_bins_old(
         os.system(f"rm {out_file}")
 
 
-def make_bins(
+def make_bins_old_trackhub(
     df,
     trackhub_dir="trackHub",
     spacer_size=100,
@@ -244,3 +244,45 @@ def make_bins(
         )
         os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
         os.system(f"rm {out_file}")
+
+
+
+def make_bins(
+    df,
+    outs,
+    spacer_size=100,
+):
+    max_bins = len(outs)
+    logging.info(f"{df}")
+    log_mem_usage()
+    fiber_df = (
+        df.lazy()
+        .groupby(["#ct", "fiber"])
+        .agg([pl.min("st"), pl.max("en")])
+        .sort(["#ct", "st", "en"])
+    ).collect()
+    logging.info("Made fiber df.")
+    bins = disjoint_bins(
+        fiber_df["#ct"], fiber_df["st"], fiber_df["en"], spacer_size=spacer_size
+    )
+    fiber_df = fiber_df.with_column(
+        pl.Series(bins).alias("bin"),
+    )
+    logging.info(f"{fiber_df}")
+    logging.info("Merging with bins.")
+    logging.info("Made binned fibers")
+    log_mem_usage()
+    # for cur_bin in sorted(df["bin"].unique()):
+    for cur_bin, cur_df in (
+        df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
+        .partition_by(groups="bin", as_dict=True)
+        .items()
+    ):
+        log_mem_usage()
+        # maintain_order=True,
+        if cur_bin > max_bins:
+            continue
+        logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
+        cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
+            outs[cur_bin-1], sep="\t", has_header=False
+        )

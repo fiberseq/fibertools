@@ -164,6 +164,11 @@ def make_bin_parser(subparsers):
     )
     parser.add_argument("bed", help="A bed file")
     parser.add_argument(
+        "--outs", "-o", 
+        help="Output bed files",
+        nargs="+",
+    )
+    parser.add_argument(
         "--spacer-size",
         help="adjust minimum distance between fibers for them to be in the same bin.",
         type=int,
@@ -425,12 +430,14 @@ def parse():
         logging.info("Reading bed.")
         df = ft.utils.read_bed_with_header(args.bed, n_rows=args.n_rows)
         logging.info("Done reading bed.")
+        if args.outs is None:
+            outs = [f"bin.{i}.bed" for i in range(args.n_bins)]
+        else:
+            outs = args.outs
         make_bins(
             df,
-            trackhub_dir=args.trackhub_dir,
+            outs,
             spacer_size=args.spacer_size,
-            genome_file=args.genome_file,
-            max_bins=args.max_bins,
         )
     elif args.command == "bed2d4":
         if args.fdr:
