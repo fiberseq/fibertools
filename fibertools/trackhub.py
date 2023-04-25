@@ -253,6 +253,8 @@ def make_bins(
     spacer_size=100,
 ):
     max_bins = len(outs)
+    for out in outs:
+        open(out, "w").close()
     logging.info(f"{df}")
     log_mem_usage()
     fiber_df = (
