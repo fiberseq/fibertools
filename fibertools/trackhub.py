@@ -253,8 +253,10 @@ def make_bins(
     spacer_size=100,
 ):
     max_bins = len(outs)
+    # touch all the files
     for out in outs:
         open(out, "w").close()
+        
     logging.info(f"{df}")
     log_mem_usage()
     fiber_df = (
@@ -282,9 +284,9 @@ def make_bins(
     ):
         log_mem_usage()
         # maintain_order=True,
-        if cur_bin > max_bins:
+        if cur_bin >= max_bins:
             continue
         logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
         cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
-            outs[cur_bin-1], sep="\t", has_header=False
+            outs[cur_bin], sep="\t", has_header=False
         )
