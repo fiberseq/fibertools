@@ -151,6 +151,7 @@ def make_q_values(in_d4, out_d4):
                 cur_mat,
                 log_q_values=log_q_values,
             ):
+                logging.info("Matrix exists")
                 logging.debug(
                     f"Writing {ct} {cur_st} {cur_en} with index {idx} to d4. Mean is {data.mean()}"
                 )
