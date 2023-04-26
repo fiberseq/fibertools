@@ -87,6 +87,7 @@ def bed2d4(args):
 def make_summary_stats(matrix, log_q_values=None):
     y = matrix.T
     logging.info("Transposed matrix")
+    print(y)
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
     acc_cov = y[:, :-2].sum(axis=1)
     link_cov = y[:, -2]
