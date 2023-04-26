@@ -258,7 +258,7 @@ def make_bins(
 
     if df.shape[0] == 0:
         logging.info("No data in this bed file.")
-        return
+        return 0
     
     logging.info(f"{df}")
     log_mem_usage()
@@ -290,7 +290,7 @@ def make_bins(
         if cur_bin >= max_bins:
             continue
         if cur_df.shape[0] == 0:
-            logging.info(f"No data in {cur_bin}.")
+            logging.info(f"No data in bin {cur_bin}.")
             continue
         logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
         cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
