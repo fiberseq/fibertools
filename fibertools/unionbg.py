@@ -83,7 +83,7 @@ def bed2d4(args):
     make_union_d4_from_df(df, genome, args.column, args.d4)
 
 
-#@njit(parallel=True)
+# @njit(parallel=True)
 def make_summary_stats(matrix, log_q_values=None):
     y = matrix.T
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
@@ -104,10 +104,12 @@ def make_summary_stats(matrix, log_q_values=None):
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
 
 
-def make_q_values(in_d4, out_d4):
+def make_q_values(in_d4, out_d4, chromosome=None):
     logging.info(f"Reading in d4 file: {in_d4}")
     file = pyd4.D4File(in_d4)
     chroms = file.chroms()
+    if chromosome is not None:
+        chroms = [chromosome]
     matrix = file.open_all_tracks()
     track_names = matrix.track_names
     # these are the q values

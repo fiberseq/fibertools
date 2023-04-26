@@ -164,7 +164,8 @@ def make_bin_parser(subparsers):
     )
     parser.add_argument("bed", help="A bed file")
     parser.add_argument(
-        "--outs", "-o", 
+        "--outs",
+        "-o",
         help="Output bed files",
         nargs="+",
     )
@@ -214,6 +215,11 @@ def make_bed2d4_parser(subparsers):
         "--column",
         help="Name of the column to split the bed file on to make bed graphs.",
         default="name",
+    )
+    parser.add_argument(
+        "--chromosome",
+        help="Only do this chromosome.",
+        default=None,
     )
 
 
@@ -442,7 +448,7 @@ def parse():
     elif args.command == "bed2d4":
         if args.fdr:
             logging.debug("Making fdr peaks.")
-            make_q_values(args.bed, args.d4)
+            make_q_values(args.bed, args.d4, chromosome=args.chromosome)
         else:
             bed2d4(args)
 

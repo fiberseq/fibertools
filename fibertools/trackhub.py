@@ -246,7 +246,6 @@ def make_bins_old_trackhub(
         os.system(f"rm {out_file}")
 
 
-
 def make_bins(
     df,
     outs,
@@ -256,7 +255,7 @@ def make_bins(
     # touch all the files
     for out in outs:
         open(out, "w").close()
-        
+
     logging.info(f"{df}")
     log_mem_usage()
     fiber_df = (
