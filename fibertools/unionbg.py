@@ -133,8 +133,9 @@ def make_q_values(in_d4, out_d4, chromosome=None):
         out_temp_files.append((temp, w))
 
     for ct, ct_len in chroms:
-        if chromosome is not None:
-            chroms = [chromosome]
+        if chromosome is not None and ct != chromosome:
+            logging.debug(f"Skipping {ct} due to cli argument")
+            continue
         logging.debug(f"Processing q-values for chrom: {ct}")
         bin_size = 5_000_000
         cur_st = 0
@@ -147,13 +148,11 @@ def make_q_values(in_d4, out_d4, chromosome=None):
             logging.info(f"Processing {ct} {cur_st} {cur_en}")
             logging.info(os.path.exists(in_d4))
             cur_mat = matrix[ct, cur_st, cur_en]
-            logging.info("Matrix exists")
             idx = 0
             for data in make_summary_stats(
                 cur_mat,
                 log_q_values=log_q_values,
             ):
-                logging.info("Data iterate")
                 logging.debug(
                     f"Writing {ct} {cur_st} {cur_en} with index {idx} to d4. Mean is {data.mean()}"
                 )
