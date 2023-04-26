@@ -91,6 +91,7 @@ def make_summary_stats(matrix, log_q_values=None):
     link_cov = y[:, -2]
     nuc_cov = y[:, -1]
     cov = acc_cov + link_cov + nuc_cov
+    logging.debug("Base numpy matrix made")
     # adjust for expected amount of coverage
     if True:
         average_log_q_value = np.nanmean(log_q_vals / cov)
