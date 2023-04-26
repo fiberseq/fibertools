@@ -108,8 +108,6 @@ def make_q_values(in_d4, out_d4, chromosome=None):
     logging.info(f"Reading in d4 file: {in_d4}")
     file = pyd4.D4File(in_d4)
     chroms = file.chroms()
-    if chromosome is not None:
-        chroms = [chromosome]
     matrix = file.open_all_tracks()
     track_names = matrix.track_names
     # these are the q values
@@ -135,6 +133,8 @@ def make_q_values(in_d4, out_d4, chromosome=None):
         out_temp_files.append((temp, w))
 
     for ct, ct_len in chroms:
+        if chromosome is not None:
+            chroms = [chromosome]
         logging.debug(f"Processing q-values for chrom: {ct}")
         bin_size = 5_000_000
         cur_st = 0
