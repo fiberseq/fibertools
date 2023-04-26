@@ -83,7 +83,7 @@ def bed2d4(args):
     make_union_d4_from_df(df, genome, args.column, args.d4)
 
 
-@njit(parallel=True)
+#@njit(parallel=True)
 def make_summary_stats(matrix, log_q_values=None):
     y = matrix.T
     logging.info("Transposed matrix")
