@@ -256,6 +256,10 @@ def make_bins(
     for out in outs:
         open(out, "w").close()
 
+    if df.shape[0] == 0:
+        logging.info("No data in this bed file.")
+        return
+    
     logging.info(f"{df}")
     log_mem_usage()
     fiber_df = (
@@ -284,6 +288,9 @@ def make_bins(
         log_mem_usage()
         # maintain_order=True,
         if cur_bin >= max_bins:
+            continue
+        if cur_df.shape[0] == 0:
+            logging.info(f"No data in {cur_bin}.")
             continue
         logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
         cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
