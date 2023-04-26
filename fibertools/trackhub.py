@@ -254,7 +254,7 @@ def make_bins(
     max_bins = len(outs)
     # touch all the files
     for out in outs:
-        open(out, "w").close()
+        open(out, "w").write("#empty bed").close()
 
     if df.shape[0] == 0:
         logging.info("No data in this bed file.")
