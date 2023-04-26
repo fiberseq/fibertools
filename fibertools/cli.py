@@ -445,6 +445,7 @@ def parse():
             outs,
             spacer_size=args.spacer_size,
         )
+        print("done making bins")
     elif args.command == "bed2d4":
         if args.fdr:
             logging.debug("Making fdr peaks.")

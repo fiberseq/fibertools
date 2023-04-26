@@ -296,3 +296,4 @@ def make_bins(
         cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
             outs[cur_bin], sep="\t", has_header=False
         )
+    return 0
