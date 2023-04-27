@@ -54,7 +54,6 @@ compositeTrack on
 shortLabel FDR track
 longLabel FDR track
 type bigWig 0 1000
-visibility full
 autoScale on
 maxItems 100000
 maxHeightPixels 200:200:1
@@ -70,7 +69,7 @@ BW_TEMPLATE = """
     type bigWig
     autoScale on
     alwaysZero on
-    visibility full
+    visibility dense
     priority {i}
     maxHeightPixels 100:100:1
 """
