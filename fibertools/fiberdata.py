@@ -152,6 +152,8 @@ class Fiberdata_rs:
             z["m6a_fc"].tolist(),
             columns=[f"m6a_fc_{i}" for i in range(bin_num)],
         )
+        for x in [m6a_fold_changes, z["msp_fc"]]:
+            logging.debug(f"\n{x}")
         out = (
             pd.concat([z, m6a_fracs, m6a_counts, AT_counts, m6a_fold_changes], axis=1)
             .drop(["bin_m6a_frac", "m6a_count", "AT_count", "m6a_fc"], axis=1)
