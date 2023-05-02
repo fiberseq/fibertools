@@ -146,7 +146,7 @@ class Fiberdata_rs:
         )
         out = (
             pd.concat([z, m6a_fracs, m6a_counts, AT_counts, m6a_fold_changes], axis=1)
-            .drop(["bin_m6a_frac", "m6a_count", "AT_count"], axis=1)
+            .drop(["bin_m6a_frac", "m6a_count", "AT_count", "m6a_fc"], axis=1)
             .replace([np.inf, -np.inf], np.nan)
             .fillna(0)
         )
