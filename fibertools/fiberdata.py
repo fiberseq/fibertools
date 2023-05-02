@@ -61,7 +61,7 @@ class Fiberdata_rs:
         all_msp_bp = row["msp_lengths"].sum()
         all_frac_AT = all_msp_AT_count / all_msp_bp
         expected_m6a_per_msp = np.nan_to_num(
-            all_msp_m6a_count / (all_msp_count * all_frac_AT), nan=1.0
+            all_msp_m6a_count / (all_msp_count), nan=1.0
         )
 
         # make the features
@@ -87,7 +87,7 @@ class Fiberdata_rs:
             msp_m6a = ((typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)).sum()
             msp_fc = np.log2(
                 np.nan_to_num(
-                    msp_m6a / (msp_AT / msp_size) * 1.0 / expected_m6a_per_msp,
+                    msp_m6a * 1.0 / expected_m6a_per_msp,
                     nan=1.0,
                 )
             )
