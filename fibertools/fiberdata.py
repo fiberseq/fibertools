@@ -50,14 +50,17 @@ class Fiberdata_rs:
 
         # figure out average msp density
         msp_ends = row["msp_starts"] + row["msp_lengths"]
-        msp_m6a_count = 0
-        msp_AT_count = 0
+        all_msp_m6a_count = 0
+        all_msp_AT_count = 0
+        all_msp_bp = row["msp_lengths"].sum()
+        all_msp_count = len(row["msp_starts"])
+        all_frac_AT = all_msp_AT_count / all_msp_bp
         for msp_st, msp_en in zip(row["msp_starts"], msp_ends):
-            msp_AT_count += is_at[msp_st:msp_en].sum()
-            msp_m6a_count += (
+            all_msp_AT_count += is_at[msp_st:msp_en].sum()
+            all_msp_m6a_count += (
                 (typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)
             ).sum()
-        msp_frac_m6a = msp_m6a_count / msp_AT_count
+        expected_m6a_per_msp = all_msp_m6a_count / (all_msp_count * all_frac_AT)
 
         # make the features
         for msp_st, msp_size, bin_starts, ref_msp_st, ref_msp_size in zip(
@@ -80,9 +83,9 @@ class Fiberdata_rs:
             # msp features
             msp_AT = is_at[msp_st:msp_en].sum()
             msp_m6a = ((typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)).sum()
-            msp_fc = ft.classify.m6a_fc_over_expected(
-                np.array([msp_m6a]), np.array([msp_AT]), msp_frac_m6a
-            )[0]
+            msp_fc = np.log2(
+                msp_m6a / (AT_count / msp_size) * 1.0 / expected_m6a_per_msp
+            )
             rtn.append(
                 {
                     "ct": row["ct"],
