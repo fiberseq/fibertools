@@ -13,7 +13,6 @@ def get_msp_mid(st, msp_st, msp_size):
     return st + msp_st + msp_size // 2
 
 
-@njit
 def m6a_fc_over_expected(m6a_count, AT_count, expected_frac_m6a, log=True):
     expected = expected_frac_m6a * AT_count
     observed = m6a_count
