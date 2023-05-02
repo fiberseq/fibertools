@@ -6,6 +6,7 @@ import mokapot
 import logging
 from xgboost import XGBClassifier
 from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
 
 
 @njit
@@ -144,7 +145,20 @@ def train_classifier(train, subset_max_train=200_000, test_fdr=0.05, train_fdr=0
     )
     mod = mokapot.Model(xgb_mod, train_fdr=train_fdr, subset_max_train=subset_max_train)
     mokapot_conf, models = mokapot.brew(train_psms, mod, test_fdr=test_fdr)
+    plot_classifier(mokapot_conf, "test.mokapot")
     return (mokapot_conf, models)
+
+
+def plot_classifier(mokapot_conf, out):
+    _fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+    colors = ("#343131", "#24B8A0")
+
+    # Plot the performance:
+    for ax, level in zip(axs, mokapot_conf.levels):
+        mokapot_conf.plot_qvalues(level=level, c=colors[1], ax=ax, label="mokapot")
+        ax.legend(frameon=False)
+    plt.tight_layout()
+    plt.savefig(f"{out}.pdf")
 
 
 def assign_classifier_fdr(pin_data, models, mokapot_conf):
