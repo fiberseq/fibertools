@@ -145,7 +145,6 @@ def train_classifier(train, subset_max_train=200_000, test_fdr=0.05, train_fdr=0
     )
     mod = mokapot.Model(xgb_mod, train_fdr=train_fdr, subset_max_train=subset_max_train)
     mokapot_conf, models = mokapot.brew(train_psms, mod, test_fdr=test_fdr)
-    plot_classifier(mokapot_conf, "test.mokapot")
     return (mokapot_conf, models)
 
 
@@ -201,4 +200,5 @@ def make_accessibility_model(
     )
     mod = mokapot.Model(xgb_mod, train_fdr=train_fdr, subset_max_train=subset_max_train)
     moka_conf, models = mokapot.brew(train_psms, mod, test_fdr=test_fdr)
+    plot_classifier(moka_conf, "test.mokapot")
     return (moka_conf, models)
