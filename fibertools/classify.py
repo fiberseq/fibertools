@@ -149,13 +149,11 @@ def train_classifier(train, subset_max_train=200_000, test_fdr=0.05, train_fdr=0
 
 
 def plot_classifier(mokapot_conf, out):
-    _fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+    _fig, ax = plt.subplots(1, 3, figsize=(12, 4))
     colors = ("#343131", "#24B8A0")
-
     # Plot the performance:
-    for ax, level in zip(axs, mokapot_conf.levels):
-        mokapot_conf.plot_qvalues(level=level, c=colors[1], ax=ax, label="mokapot")
-        ax.legend(frameon=False)
+    mokapot_conf.plot_qvalues(c=colors[1], ax=ax, label="mokapot")
+    ax.legend(frameon=False)
     plt.tight_layout()
     plt.savefig(f"{out}.pdf")
 
