@@ -52,14 +52,14 @@ class Fiberdata_rs:
         msp_ends = row["msp_starts"] + row["msp_lengths"]
         all_msp_m6a_count = 0
         all_msp_AT_count = 0
-        all_msp_bp = row["msp_lengths"].sum()
         all_msp_count = len(row["msp_starts"])
-        all_frac_AT = all_msp_AT_count / all_msp_bp
         for msp_st, msp_en in zip(row["msp_starts"], msp_ends):
             all_msp_AT_count += is_at[msp_st:msp_en].sum()
             all_msp_m6a_count += (
                 (typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)
             ).sum()
+        all_msp_bp = row["msp_lengths"].sum()
+        all_frac_AT = all_msp_AT_count / all_msp_bp
         expected_m6a_per_msp = np.nan_to_num(
             all_msp_m6a_count / (all_msp_count * all_frac_AT), nan=1.0
         )
@@ -87,7 +87,7 @@ class Fiberdata_rs:
             msp_m6a = ((typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)).sum()
             msp_fc = np.log2(
                 np.nan_to_num(
-                    msp_m6a / (AT_count / msp_size) * 1.0 / expected_m6a_per_msp,
+                    msp_m6a / (msp_AT / msp_size) * 1.0 / expected_m6a_per_msp,
                     nan=1.0,
                 )
             )
