@@ -88,7 +88,7 @@ class Fiberdata_rs:
             msp_m6a = ((typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)).sum()
             msp_fc = np.log2(
                 np.nan_to_num(
-                    float(msp_m6a) / expected_m6a_per_msp,
+                    float(msp_m6a) / msp_AT,
                     nan=1.0,
                 )
             )
