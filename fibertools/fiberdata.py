@@ -60,7 +60,9 @@ class Fiberdata_rs:
             all_msp_m6a_count += (
                 (typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)
             ).sum()
-        expected_m6a_per_msp = all_msp_m6a_count / (all_msp_count * all_frac_AT)
+        expected_m6a_per_msp = np.nan_to_num(
+            all_msp_m6a_count / (all_msp_count * all_frac_AT), nan=1.0
+        )
 
         # make the features
         for msp_st, msp_size, bin_starts, ref_msp_st, ref_msp_size in zip(
