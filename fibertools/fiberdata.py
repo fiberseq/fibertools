@@ -82,7 +82,7 @@ class Fiberdata_rs:
             msp_m6a = ((typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)).sum()
             msp_fc = ft.classify.m6a_fc_over_expected(
                 np.array([msp_m6a]), np.array([msp_AT]), msp_frac_m6a
-            )
+            )[0]
             rtn.append(
                 {
                     "ct": row["ct"],
