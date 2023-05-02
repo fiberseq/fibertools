@@ -162,7 +162,8 @@ class Fiberdata_rs:
         )
         logging.debug("Finished expanding bed12s into individual MSPs.")
         logging.debug(f"\n{out}")
-        logging.debug(f"\n{out["msp_fc"].describe()}")
+        t = out.msp_fc.describe()
+        logging.debug(f"\n{t}")
         self.features = out
 
     def make_percolator_input(self, dhs_df=None, sort=False, min_tp_msp_len=85):
