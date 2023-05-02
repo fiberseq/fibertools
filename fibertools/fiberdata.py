@@ -153,7 +153,7 @@ class Fiberdata_rs:
             columns=[f"m6a_fc_{i}" for i in range(bin_num)],
         )
         for x in [m6a_fold_changes, z["msp_fc"]]:
-            logging.debug(f"\n{x}")
+            logging.trace(f"\n{x}")
         out = (
             pd.concat([z, m6a_fracs, m6a_counts, AT_counts, m6a_fold_changes], axis=1)
             .drop(["bin_m6a_frac", "m6a_count", "AT_count", "m6a_fc"], axis=1)
@@ -162,6 +162,7 @@ class Fiberdata_rs:
         )
         logging.debug("Finished expanding bed12s into individual MSPs.")
         logging.debug(f"\n{out}")
+        logging.debug(f"\n{out["msp_fc"].describe()}")
         self.features = out
 
     def make_percolator_input(self, dhs_df=None, sort=False, min_tp_msp_len=85):
