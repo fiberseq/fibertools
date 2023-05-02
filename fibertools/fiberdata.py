@@ -34,7 +34,7 @@ class Fiberdata_rs:
         logging.debug("Finished reading ft-extract --all table")
 
     def get_msp_features(self, row, bin_width=40, bin_num=5):
-        # is_at = AT_genome[row["ct"]][row["st"] : row["en"]]
+        # fiber_wide_features
         seq = np.frombuffer(bytes(row["fiber_sequence"], "utf-8"), dtype="S1")
         is_at = (seq == b"T") | (seq == b"A")
 
@@ -46,7 +46,20 @@ class Fiberdata_rs:
         )
         fiber_AT_count = is_at.sum()
         fiber_m6a_count = row["m6a"].shape[0]
+        fiber_frac_m6a = fiber_m6a_count / fiber_AT_count
 
+        # figure out average msp density
+        msp_ends = row["msp_starts"] + row["msp_lengths"]
+        msp_m6a_count = 0
+        msp_AT_count = 0
+        for msp_st, msp_en in zip(row["msp_starts"], msp_ends):
+            msp_AT_count += is_at[msp_st:msp_en].sum()
+            msp_m6a_count += (
+                (typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)
+            ).sum()
+        msp_frac_m6a = msp_m6a_count / msp_AT_count
+
+        # make the features
         for msp_st, msp_size, bin_starts, ref_msp_st, ref_msp_size in zip(
             row["msp_starts"],
             row["msp_lengths"],
@@ -61,8 +74,13 @@ class Fiberdata_rs:
                 bin_starts, typed_bst_m6a, bin_width=bin_width
             )
             AT_count = ft.classify.get_bin_AT(bin_starts, is_at, bin_width=bin_width)
+            m6a_fc = ft.classify.m6a_fc_over_expected(
+                m6a_counts, AT_count, fiber_frac_m6a
+            )
+            # msp features
             msp_AT = is_at[msp_st:msp_en].sum()
             msp_m6a = ((typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)).sum()
+            msp_fc = ft.classify.m6a_fc_over_expected([msp_m6a], [msp_AT], msp_frac_m6a)
             rtn.append(
                 {
                     "ct": row["ct"],
@@ -73,11 +91,13 @@ class Fiberdata_rs:
                     "msp_len": msp_size,
                     "fiber_m6a_count": fiber_m6a_count,
                     "fiber_AT_count": fiber_AT_count,
-                    "fiber_m6a_frac": fiber_m6a_count / fiber_AT_count,
+                    "fiber_m6a_frac": fiber_frac_m6a,
                     "msp_m6a": msp_m6a,
                     "msp_AT": msp_AT,
+                    "msp_fc": msp_fc,
                     "m6a_count": m6a_counts,
                     "AT_count": AT_count,
+                    "m6a_fc": m6a_fc,
                 }
             )
         return rtn
@@ -118,8 +138,12 @@ class Fiberdata_rs:
             z["AT_count"].tolist(),
             columns=[f"AT_count_{i}" for i in range(bin_num)],
         )
+        m6a_fold_changes = pd.DataFrame(
+            z["m6a_fc"].tolist(),
+            columns=[f"m6a_fc_{i}" for i in range(bin_num)],
+        )
         out = (
-            pd.concat([z, m6a_fracs, m6a_counts, AT_counts], axis=1)
+            pd.concat([z, m6a_fracs, m6a_counts, AT_counts, m6a_fold_changes], axis=1)
             .drop(["bin_m6a_frac", "m6a_count", "AT_count"], axis=1)
             .replace([np.inf, -np.inf], np.nan)
             .fillna(0)

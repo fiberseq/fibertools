@@ -14,6 +14,16 @@ def get_msp_mid(st, msp_st, msp_size):
 
 
 @njit
+def m6a_fc_over_expected(m6a_count, AT_count, expected_frac_m6a, log=True):
+    expected = expected_frac_m6a * AT_count
+    observed = m6a_count
+    fc = np.nan_to_num(observed / expected, nan=0.0)
+    if log:
+        return np.log2(fc)
+    return fc
+
+
+@njit
 def get_bin_AT(bin_starts, is_at, bin_width=40):
     """_summary_
     Args:
