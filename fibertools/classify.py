@@ -196,7 +196,12 @@ def make_accessibility_model(
         scoring="roc_auc",
         verbose=2,
     )
-    mod = mokapot.Model(xgb_mod, train_fdr=train_fdr, subset_max_train=subset_max_train)
+    mod = mokapot.Model(
+        xgb_mod,
+        train_fdr=train_fdr,
+        subset_max_train=subset_max_train,
+        direction="msp_fc",
+    )
     moka_conf, models = mokapot.brew(train_psms, mod, test_fdr=test_fdr)
     plot_classifier(moka_conf, "test.mokapot")
     return (moka_conf, models)
