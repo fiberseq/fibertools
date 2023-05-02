@@ -216,7 +216,7 @@ class Fiberdata_rs:
             f"Using {train_fdr} fdr for training and {test_fdr} fdr for testing."
         )
         moka_conf, models = ft.classify.make_accessibility_model(
-            self.pin, train_fdr=train_fdr, test_fdr=test_fdr
+            self.pin, train_fdr=train_fdr, test_fdr=test_fdr, out_file=out_file
         )
         with open(out_file, "wb") as f:
             pickle.dump(moka_conf.psms, f)
