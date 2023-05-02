@@ -38,7 +38,8 @@ class Fiberdata_rs:
         seq = np.frombuffer(bytes(row["fiber_sequence"], "utf-8"), dtype="S1")
         is_at = (seq == b"T") | (seq == b"A")
 
-        typed_bst_m6a = row["msp_starts"]
+        # typed_bst_m6a = row["msp_starts"]
+        typed_bst_m6a = row["m6a"]
         rtn = []
         mids = ft.classify.get_msp_mid(0, row["msp_starts"], row["msp_lengths"])
         all_bin_starts = ft.classify.make_bin_starts(
@@ -49,16 +50,18 @@ class Fiberdata_rs:
         fiber_frac_m6a = fiber_m6a_count / fiber_AT_count
 
         # figure out average msp density
-        msp_ends = row["msp_starts"] + row["msp_lengths"]
         all_msp_m6a_count = 0.0
         all_msp_AT_count = 0.0
         all_msp_count = 0.0
-        for msp_st, msp_en in zip(row["msp_starts"], msp_ends):
+        for msp_st, msp_size in zip(row["msp_starts"], row["msp_lengths"]):
+            msp_en = msp_st + msp_size
+            if msp_en <= msp_st:
+                continue
             all_msp_AT_count += is_at[msp_st:msp_en].sum()
             all_msp_m6a_count += (
                 (typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)
             ).sum()
-            all_msp_count += 1.0
+            all_msp_count += 1
         all_msp_bp = row["msp_lengths"].sum()
         all_frac_AT = all_msp_AT_count / all_msp_bp
         expected_m6a_per_msp = np.nan_to_num(
@@ -88,7 +91,7 @@ class Fiberdata_rs:
             msp_m6a = ((typed_bst_m6a >= msp_st) & (typed_bst_m6a < msp_en)).sum()
             msp_fc = np.log2(
                 np.nan_to_num(
-                    float(msp_m6a) / msp_AT,
+                    float(msp_m6a) / expected_m6a_per_msp,
                     nan=1.0,
                 )
             )
