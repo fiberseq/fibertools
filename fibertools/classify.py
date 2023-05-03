@@ -200,7 +200,7 @@ def make_accessibility_model(
         xgb_mod,
         train_fdr=train_fdr,
         subset_max_train=subset_max_train,
-        direction="msp_fc",
+        # direction="msp_fc",
     )
     moka_conf, models = mokapot.brew(train_psms, mod, test_fdr=test_fdr)
     plot_classifier(moka_conf, out_file)
