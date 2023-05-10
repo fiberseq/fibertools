@@ -60,7 +60,7 @@ maxHeightPixels 200:200:1
 """
 
 BW_TEMPLATE = """
-    track {nm}
+    track {hap}-{nm}
     parent FDR-{sample}-{hap}
     bigDataUrl {file}
     shortLabel FDR-{sample}-{hap}-{nm}
@@ -115,39 +115,27 @@ def generate_trackhub(
     open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
     trackDb = open(f"{trackhub_dir}/trackDb.txt", "w")
     for hap in ["all", "hap1", "hap2", "unk"]:
-        # only run if bigWigs are passed
-        if bw is not None:
-            trackDb.write(BW_COMP.format(sample=sample, hap=hap))
-            nuc = None
-            acc = None
-            link = None
-            for idx, bw_f in enumerate(bw):
-                base = os.path.basename(bw_f)
-                nm = base.rstrip(".bw")
-                file = f"bw/{base}"
-                sys.stderr.write(f"{bw_f}\t{nm}\t{file}\n")
-                if nm == "nuc":
-                    nuc = file
-                elif nm == "acc":
-                    acc = file
-                elif nm == "link":
-                    link = file
-                else:
-                    sys.stderr.write(f"Stacked bigWig!")
-                    trackDb.write(
-                        BW_TEMPLATE.format(i=idx + 1, nm=nm, file=file, sample=sample)
-                    )
+        # add coverage tracks
+        acc = f"bw/{hap}.acc.bw"
+        nuc = f"bw/{hap}.nuc.bw"
+        link = f"bw/{hap}.link.bw"
+        trackDb.write(
+            MULTI_WIG.format(acc=acc, link=link, nuc=nuc, sample=sample, hap=hap)
+        )
 
-            if nuc is not None and acc is not None and link is not None:
-                trackDb.write(
-                    MULTI_WIG.format(acc=acc, link=link, nuc=nuc, sample=sample)
-                )
-                
+        # add fdr tracks
+        trackDb.write(BW_COMP.format(sample=sample, hap=hap))
+        for idx, nm in enumerate(["", ".90", ".100"]):
+            file = f"bw/fdr.{hap}{nm}.bw"
+            BW_TEMPLATE.format(nm=nm, file=file, sample=sample, hap=hap, i=idx + 1)
+
         # bin files
         trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
         viz = "dense"
         for i in range(max_bins):
-            trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample, hap=hap))
+            trackDb.write(
+                SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample, hap=hap)
+            )
             if i >= 50:
                 viz = "hide"
     # done with track db
