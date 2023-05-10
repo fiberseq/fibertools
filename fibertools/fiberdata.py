@@ -283,6 +283,7 @@ class Fiberdata_rs:
             "ten",
             "color",
             "qValue",
+            "HP",
             # "bin",
         ]
         final_out = (
