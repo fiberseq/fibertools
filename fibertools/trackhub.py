@@ -26,10 +26,10 @@ trackDb trackDb.txt
 """
 
 TRACK_COMP = """
-track fiberseq-{sample}
+track reads-{sample}-{hap}
 compositeTrack on
-shortLabel fiberseq-{sample}
-longLabel fiberseq-{sample}
+shortLabel reads-{sample}-{hap}
+longLabel reads-{sample}-{hap}
 type bigBed 9 +
 maxItems 100000
 maxHeightPixels 200:200:1
@@ -37,10 +37,10 @@ maxHeightPixels 200:200:1
 
 SUB_COMP_TRACK = """
     track bin{i}-{sample}
-    parent fiberseq-{sample}
-    bigDataUrl bins/bin.{i}.bed.bb
-    shortLabel bin{i}
-    longLabel bin{i}
+    parent reads-{sample}-{hap}
+    bigDataUrl bins/{hap}.bin.{i}.bed.bb
+    shortLabel {hap}.bin.{i}
+    longLabel {hap}.bin.{i}
     priority {i}
     type bigBed 9 +
     itemRgb on
@@ -49,7 +49,7 @@ SUB_COMP_TRACK = """
 """
 
 BW_COMP = """
-track FDR-track-{sample}
+track FDR-{sample}-{hap}
 compositeTrack on
 shortLabel FDR track
 longLabel FDR track
@@ -61,11 +61,10 @@ maxHeightPixels 200:200:1
 
 BW_TEMPLATE = """
     track {nm}
-    parent FDR-track-{sample}
+    parent FDR-{sample}-{hap}
     bigDataUrl {file}
-    parent FDR-track-{sample}
-    shortLabel FDR-{sample}-{nm}
-    longLabel FDR-{sample}-{nm}
+    shortLabel FDR-{sample}-{hap}-{nm}
+    longLabel FDR-{sample}-{hap}-{nm}
     type bigWig
     autoScale on
     alwaysZero on
@@ -75,9 +74,9 @@ BW_TEMPLATE = """
 """
 
 MULTI_WIG = """
-track fiberseq-coverage-{sample}
-longLabel fiberseq-coverage-{sample}
-shortLabel fiberseq-coverage-{sample}
+track coverage-{sample}-{hap}
+longLabel coverage-{sample}-{hap}
+shortLabel coverage-{sample}-{hap}
 container multiWig
 aggregate stacked
 showSubtrackColorOnUi on
@@ -88,19 +87,19 @@ visibility full
 maxHeightPixels 200:200:8
     
     track Accessible 
-    parent fiberseq-coverage-{sample}
+    parent coverage-{sample}-{hap}
     bigDataUrl {acc}
     type bigWig
     color 139,0,0
     
     track Linker
-    parent fiberseq-coverage-{sample}
+    parent coverage-{sample}-{hap}
     bigDataUrl {link}
     type bigWig
     color 147,112,219
     
     track Nucleosomes 
-    parent fiberseq-coverage-{sample}
+    parent coverage-{sample}-{hap}
     bigDataUrl {nuc}
     type bigWig
     color 169,169,169
