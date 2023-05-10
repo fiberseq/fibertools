@@ -131,7 +131,6 @@ def make_trackhub_parser(subparsers):
         help="Make a trackhub from a bed file.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("bed", help="A bed file")
     parser.add_argument(
         "genome_file", help="A file with chromosome sizes for the genome."
     )

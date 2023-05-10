@@ -110,7 +110,6 @@ def generate_trackhub(
     trackhub_dir="trackHub", ref="hg38", bw=None, sample="Sample", max_bins=None
 ):
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
-
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
     open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
     trackDb = open(f"{trackhub_dir}/trackDb.txt", "w")
