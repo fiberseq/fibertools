@@ -274,7 +274,6 @@ def make_accessibility_model_parser(subparsers):
         "-o", "--out", help="Write the accessibility model to this file."
     )
     parser.add_argument(
-        "-h",
         "--haps",
         help="Write the three accessibility results these files per haplotype.",
         nargs=3,
