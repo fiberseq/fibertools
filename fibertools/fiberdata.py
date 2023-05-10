@@ -272,6 +272,7 @@ class Fiberdata_rs:
         out.loc[out.qValue <= 0.05, "color"] = "255,0,0"
         out.loc[out.qValue <= 0.01, "color"] = "139,0,0"
 
+        logging.debug(f"Writing accessibility\n{out.head(5)}")
         out_cols = [
             "ct",
             "st",
