@@ -396,8 +396,12 @@ def parse():
                 sys.exit(1)
             else:
                 logging.warning("No MSPs found in MSP bed file.")
-                with open(args.out, "w") as f:
-                    f.write("")
+                outs = [args.out]
+                if args.haps is not None:
+                    outs += args.haps
+                for out in outs:
+                    with open(out, "w") as f:
+                        f.write("")
                 sys.exit(0)
         fiberdata.make_msp_features(bin_num=args.bin_num, bin_width=args.bin_width)
         # else:
