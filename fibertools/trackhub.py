@@ -114,134 +114,44 @@ def generate_trackhub(
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
     open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
     trackDb = open(f"{trackhub_dir}/trackDb.txt", "w")
+    for hap in ["all", "hap1", "hap2", "unk"]:
+        # only run if bigWigs are passed
+        if bw is not None:
+            trackDb.write(BW_COMP.format(sample=sample, hap=hap))
+            nuc = None
+            acc = None
+            link = None
+            for idx, bw_f in enumerate(bw):
+                base = os.path.basename(bw_f)
+                nm = base.rstrip(".bw")
+                file = f"bw/{base}"
+                sys.stderr.write(f"{bw_f}\t{nm}\t{file}\n")
+                if nm == "nuc":
+                    nuc = file
+                elif nm == "acc":
+                    acc = file
+                elif nm == "link":
+                    link = file
+                else:
+                    sys.stderr.write(f"Stacked bigWig!")
+                    trackDb.write(
+                        BW_TEMPLATE.format(i=idx + 1, nm=nm, file=file, sample=sample)
+                    )
 
-    # only run if bigWigs are passed
-    if bw is not None:
-        os.makedirs(f"{trackhub_dir}/bw", exist_ok=True)
-        trackDb.write(BW_COMP.format(sample=sample))
-        nuc = None
-        acc = None
-        link = None
-        for idx, bw_f in enumerate(bw):
-            base = os.path.basename(bw_f)
-            nm = base.rstrip(".bw")
-            file = f"bw/{base}"
-            sys.stderr.write(f"{bw_f}\t{nm}\t{file}\n")
-            if nm == "nuc":
-                nuc = file
-            elif nm == "acc":
-                acc = file
-            elif nm == "link":
-                link = file
-            else:
-                sys.stderr.write(f"Stacked bigWig!")
+            if nuc is not None and acc is not None and link is not None:
                 trackDb.write(
-                    BW_TEMPLATE.format(i=idx + 1, nm=nm, file=file, sample=sample)
+                    MULTI_WIG.format(acc=acc, link=link, nuc=nuc, sample=sample)
                 )
-
-        if nuc is not None and acc is not None and link is not None:
-            trackDb.write(MULTI_WIG.format(acc=acc, link=link, nuc=nuc, sample=sample))
-
+                
         # bin files
-        trackDb.write(TRACK_COMP.format(sample=sample))
+        trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
         viz = "dense"
         for i in range(max_bins):
-            trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample))
+            trackDb.write(SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample, hap=hap))
             if i >= 50:
                 viz = "hide"
-        # done with track db
-        trackDb.close()
-
-
-def make_bins_old(
-    df,
-    trackhub_dir="trackHub",
-    spacer_size=100,
-    genome_file="data/hg38.chrom.sizes",
-    max_bins=None,
-):
-    # write the bins to file
-    os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
-    os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
-
-    fiber_df = (
-        df.groupby(["#ct", "fiber"])
-        .agg({"st": "min", "en": "max"})
-        .reset_index()
-        .sort_values(["#ct", "st", "en"])
-    )
-    logging.info("Made fiber df.")
-    fiber_df["bin"] = disjoint_bins(
-        fiber_df["#ct"], fiber_df.st, fiber_df.en, spacer_size=spacer_size
-    )
-    logging.info("Made binned fibers")
-
-    df = df.merge(fiber_df[["fiber", "bin"]], on=["fiber"])
-    for cur_bin in sorted(df.bin.unique()):
-        if cur_bin > max_bins:
-            continue
-        logging.info(f"Writting {cur_bin}.")
-        out_file = f"{trackhub_dir}/bed/bin.{cur_bin}.bed"
-        bb_file = f"{trackhub_dir}/bins/bin.{cur_bin}.bed.bb"
-        (
-            df.iloc[:, 0:9]
-            .loc[df.bin == cur_bin]
-            .sort_values(["#ct", "st", "en"])
-            .to_csv(out_file, sep="\t", index=False, header=False)
-        )
-        os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
-        os.system(f"rm {out_file}")
-
-
-def make_bins_old_trackhub(
-    df,
-    trackhub_dir="trackHub",
-    spacer_size=100,
-    genome_file="data/hg38.chrom.sizes",
-    max_bins=None,
-):
-    # df.columns = [c.strip("#") for c in df.columns]
-
-    # write the bins to file
-    os.makedirs(f"{trackhub_dir}/bed", exist_ok=True)
-    os.makedirs(f"{trackhub_dir}/bins", exist_ok=True)
-    logging.info(f"{df}")
-    log_mem_usage()
-    fiber_df = (
-        df.lazy()
-        .groupby(["#ct", "fiber"])
-        .agg([pl.min("st"), pl.max("en")])
-        .sort(["#ct", "st", "en"])
-    ).collect()
-    logging.info("Made fiber df.")
-    bins = disjoint_bins(
-        fiber_df["#ct"], fiber_df["st"], fiber_df["en"], spacer_size=spacer_size
-    )
-    fiber_df = fiber_df.with_column(
-        pl.Series(bins).alias("bin"),
-    )
-    logging.info(f"{fiber_df}")
-    logging.info("Merging with bins.")
-    logging.info("Made binned fibers")
-    log_mem_usage()
-    # for cur_bin in sorted(df["bin"].unique()):
-    for cur_bin, cur_df in (
-        df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
-        .partition_by(groups="bin", as_dict=True)
-        .items()
-    ):
-        log_mem_usage()
-        # maintain_order=True,
-        if cur_bin > max_bins:
-            continue
-        logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
-        out_file = f"{trackhub_dir}/bed/bin.{cur_bin}.bed"
-        bb_file = f"{trackhub_dir}/bins/bin.{cur_bin}.bed.bb"
-        cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
-            out_file, sep="\t", has_header=False
-        )
-        os.system(f"bedToBigBed {out_file} {genome_file} {bb_file}")
-        os.system(f"rm {out_file}")
+    # done with track db
+    trackDb.close()
 
 
 def make_bins(
