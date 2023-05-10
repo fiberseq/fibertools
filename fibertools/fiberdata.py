@@ -225,7 +225,9 @@ class Fiberdata_rs:
 
     def make_nucleosome_accessibility_df(self):
         df = pd.DataFrame(
-            self.all[["ct", "fiber", "ref_nuc_starts", "ref_nuc_lengths"]].to_dicts()
+            self.all[
+                ["ct", "fiber", "HP", "ref_nuc_starts", "ref_nuc_lengths"]
+            ].to_dicts()
         )
         logging.debug(f"Expanding into individual nucleosomes. {df.shape[0]}")
         df = df.explode(["ref_nuc_starts", "ref_nuc_lengths"])
