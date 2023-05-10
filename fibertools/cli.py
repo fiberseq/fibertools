@@ -274,6 +274,13 @@ def make_accessibility_model_parser(subparsers):
         "-o", "--out", help="Write the accessibility model to this file."
     )
     parser.add_argument(
+        "-h",
+        "--haps",
+        help="Write the three accessibility results these files per haplotype.",
+        nargs=3,
+        default=None,
+    )
+    parser.add_argument(
         "-n",
         "--n-rows",
         help="For debugging only reads in n rows.",
@@ -422,6 +429,11 @@ def parse():
             )
             fiberdata.predict_accessibility(args.model, max_fdr=args.train_fdr)
             fiberdata.accessibility.to_csv(args.out, sep="\t", index=False)
+            if args.haps is not None:
+                for o_hap_file, hap in zip(args.haps, ["H1", "H2", "UNK"]):
+                    hap_df = fiberdata.accessibility[fiberdata.accessibility.HP == hap]
+                    hap_df.to_csv(o_hap_file, sep="\t", index=False)
+
     elif args.command == "split":
         split_bed_over_files(args)
     elif args.command == "trackhub":

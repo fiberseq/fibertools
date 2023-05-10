@@ -258,7 +258,7 @@ def make_bins(
     if df.shape[0] == 0:
         logging.info("No data in this bed file.")
         return 0
-    
+
     logging.info(f"{df}")
     log_mem_usage()
     fiber_df = (

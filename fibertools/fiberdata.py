@@ -102,6 +102,7 @@ class Fiberdata_rs:
                     "en": ref_msp_st + ref_msp_size,
                     "fiber": row["fiber"],
                     "score": row["score"],
+                    "HP": row["HP"],
                     "msp_len": msp_size,
                     "fiber_m6a_count": fiber_m6a_count,
                     "fiber_AT_count": fiber_AT_count,
@@ -181,7 +182,7 @@ class Fiberdata_rs:
         """
         # need to add the following columns: SpecId	Label Peptide Proteins
         # and need to remove the following columns:
-        to_remove = ["ct", "st", "en", "fiber"]
+        to_remove = ["ct", "st", "en", "fiber", "HP"]
 
         out_df = self.features.copy()
         out_df.insert(1, "Label", 0)
