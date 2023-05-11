@@ -36,7 +36,7 @@ maxHeightPixels 200:200:1
 """
 
 SUB_COMP_TRACK = """
-    track bin{i}-{sample}
+    track bin-{i}-{sample}-{hap}
     parent reads-{sample}-{hap}
     bigDataUrl bins/{hap}.bin.{i}.bed.bb
     shortLabel {hap}.bin.{i}
