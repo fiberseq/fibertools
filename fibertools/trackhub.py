@@ -138,7 +138,7 @@ def generate_trackhub(
 
         # add fdr tracks
         FDR_min = ave_coverage / 10 * 20  # at least 10% of the reads have a QV of 20
-        FDR_max = ave_coverage / 2 * 10  # half of the reads have a QV of 10
+        FDR_max = ave_coverage / 2 * 20  # half of the reads have a QV of 20
         trackDb.write(
             BW_COMP.format(sample=sample, hap=hap, FDR_min=FDR_min, FDR_max=FDR_max)
         )
