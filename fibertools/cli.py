@@ -452,7 +452,7 @@ def parse():
             bw=args.bw,
             sample=args.sample,
             max_bins=args.max_bins,
-            ave_coverage=args.ave_coverage,
+            ave_coverage=args.average_coverage,
         )
     elif args.command == "bin":
         logging.info("Reading bed.")
