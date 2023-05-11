@@ -56,6 +56,7 @@ longLabel {hap} FDR tracks
 type bigWig 0 1000
 autoScale on
 maxItems 100000
+visibility dense
 maxHeightPixels 50:50:1
 """
 
