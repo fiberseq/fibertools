@@ -147,6 +147,12 @@ def make_trackhub_parser(subparsers):
         default=75,
     )
     parser.add_argument(
+        "-c" "--average-coverage",
+        help="bam coverage.",
+        type=int,
+        default=60,
+    )
+    parser.add_argument(
         "-n",
         "--n-rows",
         help="For debugging only reads in n rows.",
@@ -445,6 +451,7 @@ def parse():
             bw=args.bw,
             sample=args.sample,
             max_bins=args.max_bins,
+            ave_coverage=args.ave_coverage,
         )
     elif args.command == "bin":
         logging.info("Reading bed.")
