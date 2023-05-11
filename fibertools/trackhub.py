@@ -126,7 +126,9 @@ def generate_trackhub(
         trackDb.write(BW_COMP.format(sample=sample, hap=hap))
         for idx, nm in enumerate(["", ".90", ".100"]):
             file = f"bw/fdr.{hap}{nm}.bw"
-            BW_TEMPLATE.format(nm=nm, file=file, sample=sample, hap=hap, i=idx + 1)
+            trackDb.write(
+                BW_TEMPLATE.format(nm=nm, file=file, sample=sample, hap=hap, i=idx + 1)
+            )
 
         # bin files
         trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
