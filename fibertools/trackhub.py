@@ -51,8 +51,8 @@ SUB_COMP_TRACK = """
 BW_COMP = """
 track FDR-{sample}-{hap}
 compositeTrack on
-shortLabel FDR track
-longLabel FDR track
+shortLabel FDR track {sample} {hap}
+longLabel FDR track {sample} {hap}
 type bigWig 0 1000
 autoScale on
 maxItems 100000
