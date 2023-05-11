@@ -149,8 +149,8 @@ def make_trackhub_parser(subparsers):
     parser.add_argument(
         "-c" "--average-coverage",
         help="bam coverage.",
-        type=int,
-        default=60,
+        type=float,
+        default=60.0,
     )
     parser.add_argument(
         "-n",
