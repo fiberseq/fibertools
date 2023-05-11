@@ -108,7 +108,12 @@ maxHeightPixels 100:100:8
 
 
 def generate_trackhub(
-    trackhub_dir="trackHub", ref="hg38", bw=None, sample="Sample", max_bins=None
+    trackhub_dir="trackHub",
+    ref="hg38",
+    bw=None,
+    sample="Sample",
+    max_bins=None,
+    ave_coverage=60,
 ):
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
@@ -135,11 +140,13 @@ def generate_trackhub(
         trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
         viz = "dense"
         for i in range(max_bins):
+            if i >= ave_coverage / 2 and hap != "all":
+                continue
+            elif i >= ave_coverage:
+                continue
             trackDb.write(
                 SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample, hap=hap)
             )
-            if i >= 50:
-                viz = "hide"
     # done with track db
     trackDb.close()
 
