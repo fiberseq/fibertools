@@ -55,7 +55,8 @@ compositeTrack on
 shortLabel {hap} FDR tracks 
 longLabel {hap} FDR tracks
 type bigWig 0 1000
-autoScale on
+autoScale off
+viewLimits {FDR_min}:{FDR_max}
 maxItems 100000
 visibility dense
 maxHeightPixels 50:50:1
@@ -139,7 +140,11 @@ def generate_trackhub(
         )
 
         # add fdr tracks
-        trackDb.write(BW_COMP.format(sample=sample, hap=hap))
+        FDR_min = ave_coverage / 10 * 20  # at least 10% of the reads have a QV of 20
+        FDR_max = ave_coverage / 2 * 20  # half of the reads have a QV of 20
+        trackDb.write(
+            BW_COMP.format(sample=sample, hap=hap, FDR_min=FDR_min, FDR_max=FDR_max)
+        )
         for idx, nm in enumerate(["", ".90", ".100"]):
             file = f"bw/fdr.{hap}{nm}.bw"
             trackDb.write(
