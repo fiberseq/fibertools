@@ -60,11 +60,11 @@ maxHeightPixels 200:200:1
 """
 
 BW_TEMPLATE = """
-    track {hap}-{nm}
+    track FDR.{hap}.{nm}
     parent FDR-{sample}-{hap}
     bigDataUrl {file}
-    shortLabel FDR-{sample}-{hap}-{nm}
-    longLabel FDR-{sample}-{hap}-{nm}
+    shortLabel FDR.{sample}.{hap}.{nm}
+    longLabel FDR.{sample}.{hap}.{nm}
     type bigWig
     autoScale on
     alwaysZero on
@@ -86,19 +86,19 @@ alwaysZero on
 visibility full
 maxHeightPixels 200:200:8
     
-    track Accessible 
+    track Accessible-{sample}-{hap}
     parent coverage-{sample}-{hap}
     bigDataUrl {acc}
     type bigWig
     color 139,0,0
     
-    track Linker
+    track Linker-{sample}-{hap}
     parent coverage-{sample}-{hap}
     bigDataUrl {link}
     type bigWig
     color 147,112,219
     
-    track Nucleosomes 
+    track Nucleosomes-{sample}-{hap}
     parent coverage-{sample}-{hap}
     bigDataUrl {nuc}
     type bigWig
