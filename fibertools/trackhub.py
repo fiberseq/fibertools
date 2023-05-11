@@ -28,8 +28,8 @@ trackDb trackDb.txt
 TRACK_COMP = """
 track reads-{sample}-{hap}
 compositeTrack on
-shortLabel reads-{sample}-{hap}
-longLabel reads-{sample}-{hap}
+shortLabel {hap} reads
+longLabel {hap} reads
 type bigBed 9 +
 maxItems 100000
 maxHeightPixels 200:200:1
@@ -51,8 +51,8 @@ SUB_COMP_TRACK = """
 BW_COMP = """
 track FDR-{sample}-{hap}
 compositeTrack on
-shortLabel FDR track {sample} {hap}
-longLabel FDR track {sample} {hap}
+shortLabel {hap} FDR tracks 
+longLabel {hap} FDR tracks
 type bigWig 0 1000
 autoScale on
 maxItems 100000
@@ -75,8 +75,8 @@ BW_TEMPLATE = """
 
 MULTI_WIG = """
 track coverage-{sample}-{hap}
-longLabel coverage-{sample}-{hap}
-shortLabel coverage-{sample}-{hap}
+longLabel {hap} coverage
+shortLabel {hap} coverage
 container multiWig
 aggregate stacked
 showSubtrackColorOnUi on
