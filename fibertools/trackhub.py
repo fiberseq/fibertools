@@ -115,7 +115,7 @@ def generate_trackhub(
     max_bins=None,
     ave_coverage=60,
 ):
-    upper_coverage = ave_coverage + 2 * np.sqrt(ave_coverage)
+    upper_coverage = int(ave_coverage + 3 * np.sqrt(ave_coverage))
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
     open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
