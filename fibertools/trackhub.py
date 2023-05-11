@@ -56,7 +56,7 @@ longLabel {hap} FDR tracks
 type bigWig 0 1000
 autoScale on
 maxItems 100000
-maxHeightPixels 200:200:1
+maxHeightPixels 50:50:1
 """
 
 BW_TEMPLATE = """
@@ -70,7 +70,7 @@ BW_TEMPLATE = """
     alwaysZero on
     visibility dense
     priority {i}
-    maxHeightPixels 100:100:1
+    maxHeightPixels 50:50:1
 """
 
 MULTI_WIG = """
@@ -84,7 +84,7 @@ type bigWig 0 1000
 autoScale on
 alwaysZero on
 visibility full
-maxHeightPixels 200:200:8
+maxHeightPixels 100:100:8
     
     track Accessible-{sample}-{hap}
     parent coverage-{sample}-{hap}
