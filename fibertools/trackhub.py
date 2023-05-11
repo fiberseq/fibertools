@@ -85,7 +85,7 @@ showSubtrackColorOnUi on
 type bigWig 0 1000
 autoScale off
 alwaysZero on
-viewLimits 0:{ave_coverage}
+viewLimits 0:{upper_coverage}
 visibility full
 maxHeightPixels 100:100:8
     
@@ -117,7 +117,7 @@ def generate_trackhub(
     max_bins=None,
     ave_coverage=60,
 ):
-    ave_coverage_upper = ave_coverage + 2 * np.std(ave_coverage)
+    upper_coverage = ave_coverage + 2 * np.sqrt(ave_coverage)
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
     open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
@@ -134,7 +134,7 @@ def generate_trackhub(
                 nuc=nuc,
                 sample=sample,
                 hap=hap,
-                ave_coverage=ave_coverage_upper,
+                upper_coverage=upper_coverage,
             )
         )
 
