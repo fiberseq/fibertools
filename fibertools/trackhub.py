@@ -5,6 +5,7 @@ import pandas as pd
 import logging
 import polars as pl
 import psutil
+import numpy as np
 
 
 def log_mem_usage():
@@ -82,8 +83,9 @@ container multiWig
 aggregate stacked
 showSubtrackColorOnUi on
 type bigWig 0 1000
-autoScale on
+autoScale off
 alwaysZero on
+viewLimits 0:{ave_coverage}
 visibility full
 maxHeightPixels 100:100:8
     
@@ -115,6 +117,7 @@ def generate_trackhub(
     max_bins=None,
     ave_coverage=60,
 ):
+    ave_coverage_upper = ave_coverage + 2 * np.std(ave_coverage)
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
     open(f"{trackhub_dir}/genomes.txt", "w").write(GENOMES.format(ref=ref))
@@ -125,7 +128,14 @@ def generate_trackhub(
         nuc = f"bw/{hap}.nuc.bw"
         link = f"bw/{hap}.link.bw"
         trackDb.write(
-            MULTI_WIG.format(acc=acc, link=link, nuc=nuc, sample=sample, hap=hap)
+            MULTI_WIG.format(
+                acc=acc,
+                link=link,
+                nuc=nuc,
+                sample=sample,
+                hap=hap,
+                ave_coverage=ave_coverage_upper,
+            )
         )
 
         # add fdr tracks
