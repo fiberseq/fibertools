@@ -160,6 +160,8 @@ def generate_trackhub(
         trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
         viz = "dense"
         for i in range(max_bins):
+            if hap == "all":
+                continue
             if i >= ave_coverage / 2 and hap != "all":
                 continue
             elif i >= ave_coverage:
