@@ -115,6 +115,9 @@ def generate_trackhub(
     max_bins=None,
     ave_coverage=60,
 ):
+    if ref == "T2Tv2.0":
+        ref = "GCA_009914755.4"
+    
     upper_coverage = int(ave_coverage + 3 * np.sqrt(ave_coverage))
     os.makedirs(f"{trackhub_dir}/", exist_ok=True)
     open(f"{trackhub_dir}/hub.txt", "w").write(HUB.format(sample=sample))
