@@ -62,7 +62,7 @@ maxHeightPixels 50:50:1
 """
 
 BW_TEMPLATE = """
-    track FDR.{hap}.{nm}
+    track FDR.{sample}.{hap}.{nm}
     parent FDR-{sample}-{hap}
     bigDataUrl {file}
     shortLabel FDR.{sample}.{hap}.{nm}
