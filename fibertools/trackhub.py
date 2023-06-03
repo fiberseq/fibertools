@@ -75,8 +75,8 @@ BW_TEMPLATE = """
 
 MULTI_WIG = """
 track coverage-{sample}-{hap}
-longLabel {hap} coverage
-shortLabel {hap} coverage
+longLabel {sample}-{hap} coverage
+shortLabel {sample}-{hap} coverage
 container multiWig
 aggregate stacked
 showSubtrackColorOnUi on
