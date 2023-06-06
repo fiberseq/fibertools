@@ -49,6 +49,16 @@ SUB_COMP_TRACK = """
     maxHeightPixels 1:1:1
 """
 
+FIRE_TEMPLATE = """
+track FIRE.peaks.{sample}
+bigDataUrl {file}
+shortLabel FIRE.peaks.{sample}
+longLabel FIRE.peaks.{sample}
+type bigWig
+visibility full
+maxHeightPixels 50:50:1
+"""
+
 BW_COMP = """
 track FDR-{sample}-{hap}
 compositeTrack on
@@ -145,13 +155,18 @@ def generate_trackhub(
         trackDb.write(
             BW_COMP.format(sample=sample, hap=hap, FDR_min=FDR_min, FDR_max=FDR_max)
         )
-        for idx, nm in enumerate([".90", ".100"]):
-            file = f"bw/fdr.{hap}{nm}.bw"
-            trackDb.write(
-                BW_TEMPLATE.format(
-                    nm=nm, file=file, sample=sample, hap=hap, i=idx + 1, viz="hide"
-                )
-            )
+        if hap == "all":
+            file =f"bw/FIRE.bw"
+            trackDb.write(FIRE_TEMPLATE.format(file=file, sample=sample))
+        
+        idx=0
+        # for idx, nm in enumerate([".90", ".100"]):
+        #     file = f"bw/fdr.{hap}{nm}.bw"
+        #     trackDb.write(
+        #         BW_TEMPLATE.format(
+        #             nm=nm, file=file, sample=sample, hap=hap, i=idx + 1, viz="hide"
+        #         )
+        #     )
         file = f"bw/{hap}.fdr.bw"
         trackDb.write(
             BW_TEMPLATE.format(
