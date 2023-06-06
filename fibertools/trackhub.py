@@ -51,11 +51,11 @@ SUB_COMP_TRACK = """
 
 FIRE_TEMPLATE = """
 track FIRE.peaks.{sample}
+type bigBed 3
 bigDataUrl {file}
 shortLabel FIRE.peaks.{sample}
 longLabel FIRE.peaks.{sample}
-type bigWig
-visibility full
+visibility dense
 maxHeightPixels 50:50:1
 """
 
@@ -156,7 +156,7 @@ def generate_trackhub(
             BW_COMP.format(sample=sample, hap=hap, FDR_min=FDR_min, FDR_max=FDR_max)
         )
         if hap == "all":
-            file =f"bw/FIRE.bw"
+            file =f"bw/FIRE.bb"
             trackDb.write(FIRE_TEMPLATE.format(file=file, sample=sample))
         
         idx=0
