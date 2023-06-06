@@ -156,10 +156,10 @@ def generate_trackhub(
             BW_COMP.format(sample=sample, hap=hap, FDR_min=FDR_min, FDR_max=FDR_max)
         )
         if hap == "all":
-            file =f"bw/FIRE.bb"
+            file = f"bw/FIRE.bb"
             trackDb.write(FIRE_TEMPLATE.format(file=file, sample=sample))
-        
-        idx=0
+
+        idx = 0
         # for idx, nm in enumerate([".90", ".100"]):
         #     file = f"bw/fdr.{hap}{nm}.bw"
         #     trackDb.write(
@@ -175,18 +175,19 @@ def generate_trackhub(
         )
 
         # bin files
-        trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
-        viz = "dense"
-        for i in range(max_bins):
-            if hap == "all":
-                continue
-            if i >= ave_coverage / 2 and hap != "all":
-                continue
-            elif i >= ave_coverage:
-                continue
-            trackDb.write(
-                SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample, hap=hap)
-            )
+        if hap != "all":
+            trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
+            viz = "dense"
+            for i in range(max_bins):
+                if hap == "all":
+                    continue
+                if i >= ave_coverage / 2 and hap != "all":
+                    continue
+                elif i >= ave_coverage:
+                    continue
+                trackDb.write(
+                    SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample, hap=hap)
+                )
     # done with track db
     trackDb.close()
 
