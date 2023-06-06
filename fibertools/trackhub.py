@@ -156,7 +156,7 @@ def generate_trackhub(
             BW_COMP.format(sample=sample, hap=hap, FDR_min=FDR_min, FDR_max=FDR_max)
         )
         if hap == "all":
-            file = f"bw/FIRE.bb"
+            file = f"bb/FIRE.bb"
             trackDb.write(FIRE_TEMPLATE.format(file=file, sample=sample))
 
         idx = 0
