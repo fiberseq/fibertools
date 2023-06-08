@@ -59,6 +59,18 @@ visibility dense
 maxHeightPixels 50:50:1
 """
 
+HAP_TEMPLATE = """
+track hap.diff.{sample}
+type bigBed 9 +
+itemRgb on
+bigDataUrl {file}
+shortLabel hap.diff{sample}
+longLabel hap.diff.{sample}
+visibility pack
+maxHeightPixels 25:25:1
+"""
+
+
 BW_COMP = """
 track FDR-{sample}-{hap}
 compositeTrack on
@@ -158,8 +170,12 @@ def generate_trackhub(
         if hap == "all":
             file = f"bb/FIRE.bb"
             trackDb.write(FIRE_TEMPLATE.format(file=file, sample=sample))
+            # add hap tracks
+            file = f"bb/hap_differences.bb"
+            trackDb.write(HAP_TEMPLATE.format(file=file, sample=sample))
 
         idx = 0
+        
         # for idx, nm in enumerate([".90", ".100"]):
         #     file = f"bw/fdr.{hap}{nm}.bw"
         #     trackDb.write(
