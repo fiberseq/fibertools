@@ -191,15 +191,16 @@ def generate_trackhub(
         )
 
         # bin files
+        max_coverage = ave_coverage * 3 * np.sqrt(ave_coverage)
         if hap != "all":
             trackDb.write(TRACK_COMP.format(sample=sample, hap=hap))
             viz = "dense"
             for i in range(max_bins):
                 if hap == "all":
                     continue
-                if i >= ave_coverage / 2 and hap != "all":
+                if i >= max_coverage / 2 and hap != "all" and hap != "unk":
                     continue
-                elif i >= ave_coverage:
+                elif i >= max_coverage:
                     continue
                 trackDb.write(
                     SUB_COMP_TRACK.format(i=i + 1, viz=viz, sample=sample, hap=hap)
