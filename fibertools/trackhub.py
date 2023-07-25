@@ -97,25 +97,25 @@ BW_TEMPLATE = """
 
 PER_ACC_COMP = """
 track percent-accessible-{sample}
-compositeTrack on
 shortLabel percent-accessible tracks 
 longLabel  percent-accessible tracks
+container multiWig
+aggregate stacked
+showSubtrackColorOnUi on
 type bigWig 0 1000
+alwaysZero on
 viewLimits 0:100
 autoScale off
 maxItems 100000
-maxHeightPixels 50:50:1
+maxHeightPixels 100:100:8
 """
 
 PER_ACC_TEMPLATE = """
     track percent-accessible-{sample}-{hap}
     parent percent-accessible-{sample}
     bigDataUrl {file}
-    shortLabel percent-accessible-{sample}-{hap}
-    longLabel percent-accessible-{sample}-{hap}
     type bigWig
-    visibility {viz}
-    maxHeightPixels 50:50:1
+    color {color}
 """
 
 MULTI_WIG = """
@@ -216,10 +216,17 @@ def generate_trackhub(
         # add percent accessible tracks
         file = f"bw/{hap}.percent.accessible.bw"
         if hap == "all":
+            color = "0,0,0"
             trackDb.write(PER_ACC_TEMPLATE.format(sample=sample))
-        trackDb.write(
-            PER_ACC_COMP.format(sample=sample, hap=hap, file=file, viz="hide")
-        )
+        elif hap == "hap1":
+            color = "0,0,255"
+        elif hap == "hap2":
+            color = "255,0,0"
+            
+        if hap == "unk":
+            trackDb.write(
+                PER_ACC_COMP.format(sample=sample, hap=hap, file=file, color=color)
+            )
 
         # bin files
         max_coverage = ave_coverage * 3 * np.sqrt(ave_coverage)
