@@ -100,7 +100,8 @@ track percent-accessible-{sample}
 shortLabel percent-accessible tracks 
 longLabel  percent-accessible tracks
 container multiWig
-aggregate none #transparentOverlay
+aggregate none 
+#transparentOverlay
 showSubtrackColorOnUi on
 type bigWig 0 1000
 alwaysZero on
