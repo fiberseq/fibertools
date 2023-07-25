@@ -217,7 +217,7 @@ def generate_trackhub(
         file = f"bw/{hap}.percent.accessible.bw"
         if hap == "all":
             color = "0,0,0"
-            trackDb.write(PER_ACC_TEMPLATE.format(sample=sample))
+            trackDb.write(PER_ACC_COMP.format(sample=sample))
         elif hap == "hap1":
             color = "0,0,255"
         elif hap == "hap2":
@@ -225,7 +225,7 @@ def generate_trackhub(
 
         if hap == "unk":
             trackDb.write(
-                PER_ACC_COMP.format(sample=sample, hap=hap, file=file, color=color)
+                PER_ACC_TEMPLATE.format(sample=sample, hap=hap, file=file, color=color)
             )
 
         # bin files
