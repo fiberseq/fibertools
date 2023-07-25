@@ -98,8 +98,8 @@ BW_TEMPLATE = """
 #transparentOverlay
 PER_ACC_COMP = """
 track percent-accessible-{sample}
-shortLabel percent-accessible tracks 
-longLabel  percent-accessible tracks
+shortLabel {sample} percent-accessible tracks 
+longLabel  {sample} percent-accessible tracks
 container multiWig
 aggregate none 
 showSubtrackColorOnUi on
