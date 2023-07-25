@@ -107,6 +107,7 @@ alwaysZero on
 viewLimits 0:100
 autoScale off
 maxItems 100000
+visibility full
 maxHeightPixels 100:100:8
 """
 
@@ -224,8 +225,9 @@ def generate_trackhub(
             color = "255,0,0"
 
         if hap != "unk":
+            viz = "full" if hap != "all" else "hide"
             trackDb.write(
-                PER_ACC_TEMPLATE.format(sample=sample, hap=hap, file=file, color=color)
+                PER_ACC_TEMPLATE.format(sample=sample, hap=hap, file=file, color=color, viz=viz)
             )
 
         # bin files
