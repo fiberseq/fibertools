@@ -95,13 +95,13 @@ BW_TEMPLATE = """
     maxHeightPixels 50:50:1
 """
 
+#transparentOverlay
 PER_ACC_COMP = """
 track percent-accessible-{sample}
 shortLabel percent-accessible tracks 
 longLabel  percent-accessible tracks
 container multiWig
 aggregate none 
-#transparentOverlay
 showSubtrackColorOnUi on
 type bigWig 0 1000
 alwaysZero on
