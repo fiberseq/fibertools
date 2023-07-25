@@ -95,6 +95,29 @@ BW_TEMPLATE = """
     maxHeightPixels 50:50:1
 """
 
+PER_ACC_COMP = """
+track percent-accessible-{sample}
+compositeTrack on
+shortLabel percent-accessible tracks 
+longLabel  percent-accessible tracks
+type bigWig 0 1000
+viewLimits 0:100
+autoScale off
+maxItems 100000
+maxHeightPixels 50:50:1
+"""
+
+PER_ACC_TEMPLATE = """
+    track percent-accessible-{sample}-{hap}
+    parent percent-accessible-{sample}
+    bigDataUrl {file}
+    shortLabel percent-accessible-{sample}-{hap}
+    longLabel percent-accessible-{sample}-{hap}
+    type bigWig
+    visibility {viz}
+    maxHeightPixels 50:50:1
+"""
+
 MULTI_WIG = """
 track coverage-{sample}-{hap}
 longLabel {sample}-{hap} coverage
@@ -175,7 +198,7 @@ def generate_trackhub(
             trackDb.write(HAP_TEMPLATE.format(file=file, sample=sample))
 
         idx = 0
-        
+
         # for idx, nm in enumerate([".90", ".100"]):
         #     file = f"bw/fdr.{hap}{nm}.bw"
         #     trackDb.write(
@@ -188,6 +211,14 @@ def generate_trackhub(
             BW_TEMPLATE.format(
                 nm="", file=file, sample=sample, hap=hap, i=idx + 1, viz="full"
             )
+        )
+
+        # add percent accessible tracks
+        file = f"bw/{hap}.percent.accessible.bw"
+        if hap == "all":
+            trackDb.write(PER_ACC_TEMPLATE.format(sample=sample))
+        trackDb.write(
+            PER_ACC_COMP.format(sample=sample, hap=hap, file=file, viz="hide")
         )
 
         # bin files
