@@ -100,14 +100,13 @@ track percent-accessible-{sample}
 shortLabel percent-accessible tracks 
 longLabel  percent-accessible tracks
 container multiWig
-aggregate transparentOverlay
+aggregate none #transparentOverlay
 showSubtrackColorOnUi on
 type bigWig 0 1000
 alwaysZero on
 viewLimits 0:100
 autoScale off
 maxItems 100000
-visibility full
 maxHeightPixels 100:100:8
 """
 
@@ -116,6 +115,7 @@ PER_ACC_TEMPLATE = """
     parent percent-accessible-{sample}
     bigDataUrl {file}
     type bigWig
+    visibility {viz}
     color {color}
 """
 
