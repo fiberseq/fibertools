@@ -223,7 +223,7 @@ def generate_trackhub(
         elif hap == "hap2":
             color = "255,0,0"
 
-        if hap == "unk":
+        if hap != "unk":
             trackDb.write(
                 PER_ACC_TEMPLATE.format(sample=sample, hap=hap, file=file, color=color)
             )
