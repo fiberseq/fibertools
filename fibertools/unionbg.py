@@ -85,7 +85,7 @@ def bed2d4(args):
 
 # @njit(parallel=True)
 def make_summary_stats(matrix, log_q_values=None, weights=None):
-    y=matrix
+    y = matrix
     if weights is None:
         y = matrix.T
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
@@ -95,7 +95,12 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
     cov = acc_cov + link_cov + nuc_cov
     # adjust for expected amount of coverage
     if True:
-        average_log_q_value = np.nanmean(log_q_vals / cov)
+        if weights:
+            average_log_q_value = np.nanmean(
+                log_q_vals * weights / (cov * weights.sum())
+            )
+        else:
+            average_log_q_value = np.nanmean(log_q_vals / cov)
         if np.isnan(average_log_q_value):
             average_log_q_value = 0
         print("Average log q value:")
@@ -106,25 +111,25 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
 
 
-
-
 def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
     df = pl.read_csv(in_bed, sep="\t").to_pandas()
-    #Chr    Start   End
+    # Chr    Start   End
     # q_0     q_1     q_2     q_3     q_4     q_5
     # q_6     q_7     q_8     q_9     q_100   q_101
     track_names = df.columns[4:]
     logging.info(f"track names: {track_names}")
-    
+
     q_values = np.array([max(int(x.strip("q_")) / 100, 0.01) for x in track_names])
     log_q_values = -10 * np.log10(q_values[:-2])
     logging.info(f"q values: {q_values}, log q values: {log_q_values}")
-    
+
     weights = df.End - df.Start
     matrix = df[track_names].to_numpy()
     logging.info(f"matrix shape: {matrix.shape}, {q_values.shape} {weights.shape}")
-    
-    (log_q_vals, acc_cov, link_cov, nuc_cov) = make_summary_stats(matrix, log_q_values=log_q_values, weights=weights)
+
+    (log_q_vals, acc_cov, link_cov, nuc_cov) = make_summary_stats(
+        matrix, log_q_values=log_q_values, weights=weights
+    )
 
 
 def make_q_values(in_d4, out_d4, chromosome=None):

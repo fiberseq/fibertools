@@ -95,7 +95,7 @@ BW_TEMPLATE = """
     maxHeightPixels 50:50:1
 """
 
-#transparentOverlay
+# transparentOverlay
 PER_ACC_COMP = """
 track percent-accessible-{sample}
 shortLabel {sample} percent-accessible tracks 
@@ -229,7 +229,9 @@ def generate_trackhub(
         if hap != "unk":
             viz = "full" if hap != "all" else "hide"
             trackDb.write(
-                PER_ACC_TEMPLATE.format(sample=sample, hap=hap, file=file, color=color, viz=viz)
+                PER_ACC_TEMPLATE.format(
+                    sample=sample, hap=hap, file=file, color=color, viz=viz
+                )
             )
 
         # bin files
