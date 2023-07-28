@@ -132,13 +132,13 @@ def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
     (log_q_vals, acc_cov, link_cov, nuc_cov) = make_summary_stats(
         matrix, log_q_values=log_q_values, weights=weights
     )
+    df.drop(track_names, axis=1, inplace=True)
     df["fdr"] = log_q_vals
     df["acc"] = acc_cov
     df["link"] = link_cov
     df["nuc"] = nuc_cov
-    df.drop(track_names, axis=1, inplace=True)
     logging.info(f"Writing to {out_bed}")
-    logging.info(f"{df}")
+    logging.info(f"\n{df}")
 
 
 def make_q_values(in_d4, out_d4, chromosome=None):
