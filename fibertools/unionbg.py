@@ -121,6 +121,8 @@ def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
     weights = df.End - df.Start
     matrix = df[track_names].to_numpy()
     logging.info(f"matrix shape: {matrix.shape}, {q_values.shape} {weights.shape}")
+    
+    (log_q_vals, acc_cov, link_cov, nuc_cov) = make_summary_stats(matrix, log_q_values=log_q_values, weights=weights)
 
 
 def make_q_values(in_d4, out_d4, chromosome=None):
