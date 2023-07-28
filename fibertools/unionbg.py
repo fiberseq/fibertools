@@ -123,7 +123,7 @@ def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
     log_q_values = -10 * np.log10(q_values[:-2])
     logging.info(f"q values: {q_values}, log q values: {log_q_values}")
 
-    weights = df.End - df.Start
+    weights = (df.End - df.Start).to_numpy()
     matrix = df[track_names].to_numpy()
     logging.info(f"matrix shape: {matrix.shape}, {q_values.shape} {weights.shape}")
 
