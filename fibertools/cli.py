@@ -8,7 +8,7 @@ import logging
 from typing_extensions import Required
 from fibertools.readutils import read_in_bed_file
 from fibertools.trackhub import generate_trackhub, make_bins
-from fibertools.unionbg import bed2d4, make_q_values
+from fibertools.unionbg import bed2d4, make_q_values, make_q_values_bed_2_bed
 from fibertools.add_nucleosomes import add_nucleosomes
 import fibertools as ft
 import numpy as np
