@@ -472,6 +472,8 @@ def parse():
         if args.fdr:
             logging.debug("Making fdr peaks.")
             # make_q_values(args.bed, args.d4, chromosome=args.chromosome)
+            if args.d4 == "_":
+                args.d4 = sys.stdout
             make_q_values_bed_2_bed(args.bed, args.d4, chromosome=args.chromosome)
         else:
             bed2d4(args)
