@@ -104,6 +104,22 @@ def make_summary_stats(matrix, log_q_values=None):
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
 
 
+
+
+def make_q_values_bed_2_bed(in_bed, out_bed):
+    df = pl.read_csv(in_bed, sep="\t").to_pandas()
+    #Chr    Start   End
+    # q_0     q_1     q_2     q_3     q_4     q_5
+    # q_6     q_7     q_8     q_9     q_100   q_101
+    track_names = df.columns[4:]
+    logging.info(f"track names: {track_names}")
+    q_values = np.array([max(int(x.strip("q_")) / 100, 0.01) for x in track_names])
+    logging.info(f"q values: {q_values}")
+    weights = df.End - df.Start
+    matrix = df[track_names].to_numpy()
+    logging.info(f"matrix shape: {matrix.shape}, {q_values.shape} {weights.shape}")
+
+
 def make_q_values(in_d4, out_d4, chromosome=None):
     logging.info(f"Reading in d4 file: {in_d4}")
     file = pyd4.D4File(in_d4)
