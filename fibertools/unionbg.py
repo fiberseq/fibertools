@@ -84,7 +84,7 @@ def bed2d4(args):
 
 
 # @njit(parallel=True)
-def make_summary_stats(matrix, log_q_values=None):
+def make_summary_stats(matrix, log_q_values=None, weights=None):
     y = matrix.T
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
     acc_cov = y[:, :-2].sum(axis=1)
@@ -113,8 +113,11 @@ def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
     # q_6     q_7     q_8     q_9     q_100   q_101
     track_names = df.columns[4:]
     logging.info(f"track names: {track_names}")
+    
     q_values = np.array([max(int(x.strip("q_")) / 100, 0.01) for x in track_names])
-    logging.info(f"q values: {q_values}")
+    log_q_values = -10 * np.log10(q_values[:-2])
+    logging.info(f"q values: {q_values}, log q values: {log_q_values}")
+    
     weights = df.End - df.Start
     matrix = df[track_names].to_numpy()
     logging.info(f"matrix shape: {matrix.shape}, {q_values.shape} {weights.shape}")
