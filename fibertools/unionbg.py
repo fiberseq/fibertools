@@ -139,6 +139,7 @@ def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
     df["nuc"] = nuc_cov
     logging.info(f"Writing to {out_bed}")
     logging.info(f"\n{df}")
+    df.to_csv(out_bed, sep="\t", index=False)
 
 
 def make_q_values(in_d4, out_d4, chromosome=None):
