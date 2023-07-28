@@ -96,8 +96,9 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
     # adjust for expected amount of coverage
     if True:
         if weights is not None:
-            average_log_q_value = np.nanmean(
-                log_q_vals * weights / (cov * weights.sum())
+            average_log_q_value = np.average(
+                log_q_vals / cov,
+                weights=weights,
             )
         else:
             average_log_q_value = np.nanmean(log_q_vals / cov)
