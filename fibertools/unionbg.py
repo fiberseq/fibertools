@@ -85,7 +85,9 @@ def bed2d4(args):
 
 # @njit(parallel=True)
 def make_summary_stats(matrix, log_q_values=None, weights=None):
-    y = matrix.T
+    y=matrix
+    if weights is None:
+        y = matrix.T
     log_q_vals = (y[:, :-2] * log_q_values).sum(axis=1)
     acc_cov = y[:, :-2].sum(axis=1)
     link_cov = y[:, -2]
