@@ -102,7 +102,6 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
             average_log_q_value = np.nanmean(
                 (log_q_vals[has_coverage] * weights / weights.sum())
                 / cov[has_coverage],
-                # weights=weights,
             )
         else:
             average_log_q_value = np.nanmean(log_q_vals / cov)
