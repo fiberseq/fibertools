@@ -99,14 +99,14 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
             average_log_q_value = np.nanmean(log_q_vals / cov)
             logging.info(f"Average log q value: {average_log_q_value}")
             average_log_q_value = np.average(
-                log_q_vals / cov,
+                (log_q_vals * weights / weights.sum()) / cov,
                 weights=weights,
             )
         else:
             average_log_q_value = np.nanmean(log_q_vals / cov)
         if np.isnan(average_log_q_value):
             average_log_q_value = 0
-        
+
         logging.info(f"Average log q value: {average_log_q_value}")
         log_q_vals = log_q_vals - cov * average_log_q_value
     # assert nuc_cov.sum() == link_cov.sum()
