@@ -136,8 +136,9 @@ def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
     df["acc"] = acc_cov
     df["link"] = link_cov
     df["nuc"] = nuc_cov
+    df.drop(track_names, axis=1, inplace=True)
     logging.info(f"Writing to {out_bed}")
-    logging.info(f"Writing to {df}")
+    logging.info(f"{df}")
 
 
 def make_q_values(in_d4, out_d4, chromosome=None):
