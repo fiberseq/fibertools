@@ -96,6 +96,8 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
     # adjust for expected amount of coverage
     if True:
         if weights is not None:
+            average_log_q_value = np.nanmean(log_q_vals / cov)
+            logging.info(f"Average log q value: {average_log_q_value}")
             average_log_q_value = np.average(
                 log_q_vals / cov,
                 weights=weights,
@@ -104,9 +106,8 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
             average_log_q_value = np.nanmean(log_q_vals / cov)
         if np.isnan(average_log_q_value):
             average_log_q_value = 0
-        print("Average log q value:")
-        print(average_log_q_value)
-        print("")
+        
+        logging.info(f"Average log q value: {average_log_q_value}")
         log_q_vals = log_q_vals - cov * average_log_q_value
     # assert nuc_cov.sum() == link_cov.sum()
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
