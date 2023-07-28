@@ -110,7 +110,6 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
 
         logging.info(f"Average log q value: {average_log_q_value}")
         log_q_vals = log_q_vals - cov * average_log_q_value
-    # assert nuc_cov.sum() == link_cov.sum()
     return (log_q_vals, acc_cov, link_cov, nuc_cov)
 
 
