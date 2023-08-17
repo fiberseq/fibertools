@@ -147,12 +147,15 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False, pandas=
         # create an empty fake dataframe
         df_tmp = pd.DataFrame(
             {
-                "ct": pd.Series(dtype="str"),
-                "st": pd.Series(dtype="int"),
-                "en": pd.Series(dtype="int"),
-                "name": pd.Series(dtype="str"),
-                "score": pd.Series(dtype="int"),
-                "strand": pd.Series(dtype="str"),
+                "column_1": pd.Series(dtype="str"),
+                "column_2": pd.Series(dtype="int"),
+                "column_3": pd.Series(dtype="int"),
+                "column_4": pd.Series(dtype="str"),
+                "column_5": pd.Series(dtype="int"),
+                "column_6": pd.Series(dtype="str"),
+                "column_7": pd.Series(dtype="int"),
+                "column_8": pd.Series(dtype="int"),
+                "column_9": pd.Series(dtype="str"),
             }
         )
         df = pl.DataFrame(df_tmp)
