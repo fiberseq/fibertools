@@ -6,6 +6,7 @@ import polars as pl
 import pandas as pd
 import numpy as np
 import sys
+import os
 
 
 def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
@@ -142,17 +143,31 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False, pandas=
     if keep_header:
         comment_char = None
 
-    df = pl.read_csv(
-        bed_file,
-        sep="\t",
-        comment_char=comment_char,
-        has_header=keep_header,
-        n_rows=n_rows,
-        quote_char=None,
-        low_memory=True,
-        use_pyarrow=True,
-        null_values=["."],
-    )
+    if os.stat(bed_file).st_size == 0:
+        # create an empty fake dataframe
+        df_tmp = pd.DataFrame(
+            {
+                "ct": pd.Series(dtype="str"),
+                "st": pd.Series(dtype="int"),
+                "en": pd.Series(dtype="int"),
+                "name": pd.Series(dtype="str"),
+                "score": pd.Series(dtype="int"),
+                "strand": pd.Series(dtype="str"),
+            }
+        )
+        df = pl.DataFrame(df_tmp)
+    else:
+        df = pl.read_csv(
+            bed_file,
+            sep="\t",
+            comment_char=comment_char,
+            has_header=keep_header,
+            n_rows=n_rows,
+            quote_char=None,
+            low_memory=True,
+            use_pyarrow=True,
+            null_values=["."],
+        )
 
     if tag is not None:
         df.columns = [

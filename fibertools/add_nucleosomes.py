@@ -108,7 +108,6 @@ def meshMethods(
     cutoff,
     nuc_size_cutoff,
 ):
-
     ###FILTERS TO IMPLEMENT ########
 
     #### BASELINE is simple caller
@@ -148,11 +147,9 @@ def meshMethods(
     chromatin_binary = np.zeros(shape=fiber_length).astype(D_TYPE)
 
     for column in range(hmm_stack.shape[1]):
-
         chromatin_binary[hmm_stack[0, column] : hmm_stack[1, column]] = 2
 
     for column in range(simple_stack.shape[1]):
-
         chromatin_binary[simple_stack[0, column] : simple_stack[1, column]] = 1
 
     run_length, run_index, run_label = rle(chromatin_binary)
@@ -174,7 +171,6 @@ def meshMethods(
 
     number_of_runs = len(run_length)
     for idx in hmm_idx:
-
         if idx > 0 and idx < number_of_runs - 1:
             # check that it is not a terminal hmm nuc
             # we will call the ends via a simple caller
@@ -479,7 +475,6 @@ def simpleFind(methylated_positions, binary, cutoff):
     )  # this idx works for methylated positions as the start
 
     if len(short_idx) > 1:
-
         short_idx_consecutive_len, short_idx_consecutive_index, short_idx_diff = rle(
             np.diff(short_idx)
         )
@@ -511,7 +506,6 @@ def simpleFind(methylated_positions, binary, cutoff):
             short_idx[short_idx_consecutive_index[consecutive_mask]],
             short_idx_consecutive_len[consecutive_mask],
         ):
-
             if s + e + 2 == len(methylated_positions):
                 custom_nuc_start = methylated_positions[s] + 1
                 # start + len + 1 (0 index of python) + 1 (need to capture terminal nuc)
@@ -522,7 +516,6 @@ def simpleFind(methylated_positions, binary, cutoff):
                 # terminal_nuc_generated = True
 
             else:
-
                 custom_nuc_start = methylated_positions[s] + 1
                 custom_nuc_end = methylated_positions[
                     s + e + 2
@@ -541,7 +534,6 @@ def simpleFind(methylated_positions, binary, cutoff):
         # merged calls
 
         if len(all_included_methylations) > 0:
-
             all_included_methylations = np.concatenate(all_included_methylations)
 
             uniq_simple_mask = np.isin(
