@@ -67,9 +67,6 @@ def make_union_d4_from_df(df, genome, group_col, d4_f):
 def bed2d4(args):
     df = ft.read_in_bed_file(args.bed)
     if args.column == "score":
-        if df.nrows() == 0:
-            logging.warning("Empty bed file, making a fake entry.")
-            return
         # set high fdr values to the max
         # df = df.with_column(
         #    pl.when(pl.col("column_5") >= 30)
