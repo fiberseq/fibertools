@@ -51,7 +51,10 @@ def make_union_d4_from_df(df, genome, group_col, d4_f):
     for idx, g in enumerate(df.groupby([group_col])):
         g_n = g[group_col][0]
         logging.debug(f"Making d4 for group: {g_n}")
-        out_files.append((g_n, make_temp_d4_from_df(g, genome)))
+        temp_file = make_temp_d4_from_df(g, genome)
+        if g_n is None or temp_file is None:
+            continue
+        out_files.append((g_n, temp_file))
 
     merged = pyd4.D4Merger(d4_f)
     for tag, d4 in sorted(out_files):
