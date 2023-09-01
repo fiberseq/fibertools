@@ -22,7 +22,7 @@ dependencies:
     - sorted_nearest
     - bumpversion
     - psutil
-    - polars>=0.18
     - pip:
+          - polars>=0.18
           - pyd4>=0.3.6.2
           - pomegranate>=0.14.8
