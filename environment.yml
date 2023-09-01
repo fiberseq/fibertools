@@ -15,14 +15,14 @@ dependencies:
     - scikit-learn
     - xgboost==1.5.1
     - Cython
-    - pyarrow 
+    - pyarrow
     - tqdm
     - rust # skip, needed for pyd4, ==1.61.0
     - pip>=20.1 # pip is needed as dependency
     - sorted_nearest
     - bumpversion
     - psutil
+    - polars==0.18
     - pip:
-          - polars==0.14
           - pyd4>=0.3.6.2
           - pomegranate>=0.14.8
