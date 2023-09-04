@@ -34,7 +34,7 @@ def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
     ]
     df = pl.read_csv(
         f,
-        sep="\t",
+        separator="\t",
         n_rows=n_rows,
         null_values=["."],
     )
@@ -77,7 +77,7 @@ def read_in_bed12_file(bed_file, n_rows=None, tag=None, trim=True):
     ]
     df = pl.read_csv(
         bed_file,
-        sep="\t",
+        separator="\t",
         new_columns=col_names,
         has_header=False,
         n_rows=n_rows,
@@ -162,7 +162,7 @@ def read_in_bed_file(bed_file, n_rows=None, tag=None, keep_header=False, pandas=
     else:
         df = pl.read_csv(
             bed_file,
-            sep="\t",
+            separator="\t",
             comment_char=comment_char,
             has_header=keep_header,
             n_rows=n_rows,

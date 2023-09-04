@@ -119,7 +119,7 @@ def make_summary_stats(matrix, log_q_values=None, weights=None):
 
 
 def make_q_values_bed_2_bed(in_bed, out_bed, chromosome=None):
-    df = pl.read_csv(in_bed, sep="\t").to_pandas()
+    df = pl.read_csv(in_bed, separator="\t").to_pandas()
     # Chr    Start   End
     # q_0     q_1     q_2     q_3     q_4     q_5
     # q_6     q_7     q_8     q_9     q_100   q_101

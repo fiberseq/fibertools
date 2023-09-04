@@ -17,7 +17,7 @@ def read_bed_with_header(bed, n_rows=None):
     input = bed
     if bed == "-":
         input = io.StringIO(sys.stdin.read())
-    df = pl.read_csv(input, sep="\t", stop_after_n_rows=n_rows, comment_char="$")
+    df = pl.read_csv(input, separator="\t", n_rows=n_rows, comment_char="$")
     return df
 
 
