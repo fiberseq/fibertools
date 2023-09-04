@@ -70,15 +70,8 @@ def make_union_d4_from_df(df, genome, group_col, d4_f):
 def bed2d4(args):
     df = ft.read_in_bed_file(args.bed)
     if args.column == "score":
-        # set high fdr values to the max
-        # df = df.with_column(
-        #    pl.when(pl.col("column_5") >= 30)
-        #    .then(100)
-        #    .otherwise(pl.col("column_5"))
-        #    .alias("tmp_score")
-        # )
         # set give nucleosomes their own score
-        df = df.with_column(
+        df = df.with_columns(
             pl.when(pl.col("column_9") == "230,230,230")
             .then(101)
             .otherwise(pl.col("column_5"))

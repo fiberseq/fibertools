@@ -279,7 +279,7 @@ def make_bins(
     bins = disjoint_bins(
         fiber_df["#ct"], fiber_df["st"], fiber_df["en"], spacer_size=spacer_size
     )
-    fiber_df = fiber_df.with_column(
+    fiber_df = fiber_df.with_columns(
         pl.Series(bins).alias("bin"),
     )
     logging.info(f"{fiber_df}")
