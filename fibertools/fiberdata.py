@@ -18,7 +18,7 @@ class Fiberdata_rs:
         Fiberdata: A class object with dataframes for fiberseq data.
     """
 
-    all: pl.internals.frame.DataFrame
+    all: pl.DataFrame
     features: pd.core.frame.DataFrame
     pin: pd.core.frame.DataFrame
     accessibility: pd.core.frame.DataFrame
