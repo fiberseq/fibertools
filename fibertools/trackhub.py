@@ -289,7 +289,7 @@ def make_bins(
     # for cur_bin in sorted(df["bin"].unique()):
     for cur_bin, cur_df in (
         df.join(fiber_df.select(["fiber", "bin"]), on=["fiber"])
-        .partition_by(groups="bin", as_dict=True)
+        .partition_by(by="bin", as_dict=True)
         .items()
     ):
         log_mem_usage()
