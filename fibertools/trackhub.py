@@ -301,6 +301,6 @@ def make_bins(
             continue
         logging.info(f"Writing {cur_df.shape} elements in {cur_bin}.")
         cur_df.select(cur_df.columns[0:9]).sort(["#ct", "st", "en"]).write_csv(
-            outs[cur_bin], sep="\t", has_header=False
+            outs[cur_bin], separator="\t", has_header=False
         )
     return 0
