@@ -23,6 +23,6 @@ dependencies:
     - bumpversion
     - psutil
     - pip:
-          - polars>=0.19
+          - polars==0.14
           - pyd4>=0.3.6.2
           - pomegranate>=0.14.8
