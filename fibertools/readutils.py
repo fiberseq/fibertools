@@ -41,9 +41,10 @@ def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
     # clean up comment char
     df.columns = list(map(lambda x: x.strip("#"), df.columns))
 
-    for col in cols_with_lists:
-        logging.debug(f"Splitting {col} into list of ints.")
-        df.replace(col, split_to_ints(df, col, trim=False))
+    if df.shape[0] > 0:
+        for col in cols_with_lists:
+            logging.debug(f"Splitting {col} into list of ints.")
+            df.replace(col, split_to_ints(df, col, trim=False))
     if pandas:
         df = pd.DataFrame(df.to_dicts())
     return df
