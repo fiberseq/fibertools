@@ -42,7 +42,7 @@ def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
     # clean up comment char
     df.columns = list(map(lambda x: x.strip("#"), df.columns))
     logging.info("Read in table with {} rows.".format(df.shape[0]))
-    logging.info("\n{df}")
+    logging.info(f"\n{df}")
     
     if df.shape[0] > 0:
         for col in cols_with_lists:
