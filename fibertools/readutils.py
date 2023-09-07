@@ -37,10 +37,13 @@ def read_fibertools_rs_all_file(f: str, pandas=False, n_rows=None):
         separator="\t",
         n_rows=n_rows,
         null_values=["."],
+        comment_char=None,
     )
     # clean up comment char
     df.columns = list(map(lambda x: x.strip("#"), df.columns))
-
+    logging.info("Read in table with {} rows.".format(df.shape[0]))
+    logging.info("\n{df}")
+    
     if df.shape[0] > 0:
         for col in cols_with_lists:
             logging.debug(f"Splitting {col} into list of ints.")
