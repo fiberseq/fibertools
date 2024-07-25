@@ -1,3 +1,8 @@
+========
+Archived
+========
+Please use https://github.com/fiberseq/fibertools-rs
+
 ==========
 fibertools
 ==========
